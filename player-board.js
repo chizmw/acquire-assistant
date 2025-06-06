@@ -55,21 +55,6 @@ function renderPlayerBoard() {
   const root = document.getElementById('player-board-root');
   if (!root) return;
 
-  // Mode selector
-  const modeSelector = `
-    <div class="mb-6 flex items-center gap-4">
-      <label for="mode-select" class="font-medium">Game mode:</label>
-      <select id="mode-select" class="border rounded px-2 py-1">
-        ${MODES.map(
-          (m) =>
-            `<option value="${m.value}"${
-              state.mode === m.value ? ' selected' : ''
-            }>${m.label}</option>`
-        ).join('')}
-      </select>
-    </div>
-  `;
-
   // Hotel list
   const hotelRows = HOTEL_NAMES.map((hotel) => {
     const size = state.hotelSizes[hotel];
@@ -119,8 +104,24 @@ function renderPlayerBoard() {
     `;
   }).join('');
 
+  // Mode selector
+  const modeSelector = `
+    <div class="flex justify-end mt-8 mb-2">
+      <div class="flex items-center gap-4">
+        <label for="mode-select" class="font-medium">Game mode:</label>
+        <select id="mode-select" class="border rounded px-2 py-1">
+          ${MODES.map(
+            (m) =>
+              `<option value="${m.value}"${
+                state.mode === m.value ? ' selected' : ''
+              }>${m.label}</option>`
+          ).join('')}
+        </select>
+      </div>
+    </div>
+  `;
+
   root.innerHTML = `
-    ${modeSelector}
     <table class="w-full text-left bg-white rounded shadow">
       <thead>
         <tr class="border-b">
@@ -136,6 +137,7 @@ function renderPlayerBoard() {
         ${hotelRows}
       </tbody>
     </table>
+    ${modeSelector}
   `;
 
   // Add event listeners
