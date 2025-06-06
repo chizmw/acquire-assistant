@@ -316,16 +316,47 @@ function renderMergeModal(acquireState) {
     const acquiredData = getHotelChainData(state.mode, acquired, acquiredSize);
     const sellPrice =
       acquiredData && acquiredData.buySellPrice
-        ? `$${acquiredData.buySellPrice.toLocaleString('en-GB')}`
-        : '-';
+        ? acquiredData.buySellPrice
+        : null;
+    const sellPriceDisplay = sellPrice
+      ? `$${sellPrice.toLocaleString('en-GB')}`
+      : '-';
+    // Quantity table (1-10), flipped: quantities on top row, sell values on second row
+    let quantityTable = '';
+    if (sellPrice) {
+      const qtyRow = Array.from(
+        { length: 10 },
+        (_, i) => `<td class='py-1 px-2'>${i + 1}</td>`
+      ).join('');
+      const valueRow = Array.from(
+        { length: 10 },
+        (_, i) =>
+          `<td class='py-1 px-2'>$${((i + 1) * sellPrice).toLocaleString(
+            'en-GB'
+          )}</td>`
+      ).join('');
+      quantityTable = `
+        <table class="mt-2 mb-4 text-xs w-full text-center border border-gray-200 rounded">
+          <tbody>
+            <tr class="bg-gray-100">
+              ${qtyRow}
+            </tr>
+            <tr>
+              ${valueRow}
+            </tr>
+          </tbody>
+        </table>
+      `;
+    }
     modalContent = `
       <div class="mb-4 text-lg font-semibold"><span class="${HOTEL_STYLES[survivor]}">${survivor}</span> is acquiring <span class="${HOTEL_STYLES[acquired]}">${acquired}</span></div>
       <div class="mb-2">Stockholder options for <span class="${HOTEL_STYLES[acquired]}">${acquired}</span>:</div>
       <ul class="list-disc list-inside mb-4">
         <li><span class="font-bold">Keep</span>: Hold your stock in case a new ${acquired} chain is founded later.</li>
-        <li><span class="font-bold">Sell</span>: Sell to the bank for <span class="font-bold">${sellPrice}</span> per share.</li>
+        <li><span class="font-bold">Sell</span>: Sell to the bank for <span class="font-bold">${sellPriceDisplay}</span> per share.</li>
         <li><span class="font-bold">Swap</span>: Trade 2 shares of ${acquired} for 1 share of ${survivor} (if available).</li>
       </ul>
+      ${quantityTable}
       <button id="close-merge-modal" class="mt-2 px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">Close</button>
     `;
   }
@@ -335,7 +366,7 @@ function renderMergeModal(acquireState) {
   modal.className =
     'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40';
   modal.innerHTML = `
-    <div class="bg-white rounded shadow-lg p-6 max-w-md w-full relative">
+    <div class="bg-white rounded shadow-lg p-6 max-w-2xl w-full relative">
       ${modalContent}
       <button id="merge-modal-x" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
     </div>
