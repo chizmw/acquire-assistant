@@ -73,32 +73,30 @@ function renderPlayerBoard() {
   // Hotel list
   const hotelRows = HOTEL_NAMES.map((hotel) => {
     const size = state.hotelSizes[hotel];
-    let info = '<span class="text-gray-400">No information</span>';
+    let buySell = '-';
+    let primary = '-';
+    let secondary = '-';
+    let tertiary = '-';
     if (size > 0) {
       const data = getHotelChainData(state.mode, hotel, size);
       if (data) {
-        info = `
-          <div class="flex flex-col gap-1">
-            <span>Buy/Sell: <span class="font-semibold">$${data.buySellPrice.toLocaleString(
-              'en-GB'
-            )}</span></span>
-            <span>Primary bonus: <span class="font-semibold">$${data.bonuses.primary.toLocaleString(
-              'en-GB'
-            )}</span></span>
-            <span>Secondary bonus: <span class="font-semibold">$${data.bonuses.secondary.toLocaleString(
-              'en-GB'
-            )}</span></span>
-            ${
-              data.bonuses.tertiary !== undefined
-                ? `<span>Tertiary bonus: <span class="font-semibold">$${data.bonuses.tertiary.toLocaleString(
-                    'en-GB'
-                  )}</span></span>`
-                : ''
-            }
-          </div>
-        `;
-      } else {
-        info = '<span class="text-red-500">No data for this size</span>';
+        buySell =
+          data.buySellPrice !== undefined && data.buySellPrice !== null
+            ? `$${data.buySellPrice.toLocaleString('en-GB')}`
+            : '-';
+        primary =
+          data.bonuses.primary !== undefined && data.bonuses.primary !== null
+            ? `$${data.bonuses.primary.toLocaleString('en-GB')}`
+            : '-';
+        secondary =
+          data.bonuses.secondary !== undefined &&
+          data.bonuses.secondary !== null
+            ? `$${data.bonuses.secondary.toLocaleString('en-GB')}`
+            : '-';
+        tertiary =
+          data.bonuses.tertiary !== undefined && data.bonuses.tertiary !== null
+            ? `$${data.bonuses.tertiary.toLocaleString('en-GB')}`
+            : '-';
       }
     }
     const hotelStyle = HOTEL_STYLES[hotel] || '';
@@ -113,7 +111,10 @@ function renderPlayerBoard() {
           }</span>
           <button type="button" class="ml-1 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Increase size for ${hotel}" data-hotel="${hotel}">+</button>
         </td>
-        <td class="py-2">${info}</td>
+        <td class="py-2">${buySell}</td>
+        <td class="py-2">${primary}</td>
+        <td class="py-2">${secondary}</td>
+        <td class="py-2">${tertiary}</td>
       </tr>
     `;
   }).join('');
@@ -125,7 +126,10 @@ function renderPlayerBoard() {
         <tr class="border-b">
           <th class="py-2 pr-4 w-32 whitespace-nowrap">Hotel</th>
           <th class="py-2 pr-4">Size</th>
-          <th class="py-2">Information</th>
+          <th class="py-2">Buy/Sell</th>
+          <th class="py-2">Primary</th>
+          <th class="py-2">Secondary</th>
+          <th class="py-2">Tertiary</th>
         </tr>
       </thead>
       <tbody>
