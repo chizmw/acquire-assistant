@@ -61,9 +61,13 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col items-center justify-start p-6 pt-24">
-      <section class="w-full max-w-3xl bg-white rounded shadow p-6 mt-6">
-        <div id="player-board-root">
-          <!-- Dynamic player board UI will be rendered here -->
+      <section
+        class="w-full max-w-3xl bg-white rounded shadow p-0 mt-6 overflow-x-auto sm:max-w-full"
+      >
+        <div class="p-6 min-w-[350px]">
+          <div id="player-board-root">
+            <!-- Dynamic player board UI will be rendered here -->
+          </div>
         </div>
       </section>
     </main>
