@@ -12,6 +12,16 @@ const HOTEL_NAMES = [
   'Imperial',
 ];
 
+const HOTEL_STYLES = {
+  Sackson: 'bg-red-700 text-white font-bold px-2 rounded',
+  Tower: 'bg-yellow-300 text-black font-bold px-2 rounded',
+  American: 'bg-blue-100 text-blue-900 font-bold px-2 rounded',
+  Festival: 'bg-green-700 text-white font-bold px-2 rounded',
+  Worldwide: 'bg-purple-800 text-white font-bold px-2 rounded',
+  Continental: 'bg-blue-500 text-white font-bold px-2 rounded',
+  Imperial: 'bg-orange-500 text-white font-bold px-2 rounded',
+};
+
 const MODES = [
   { value: 'tycoon', label: 'Tycoon Mode' },
   { value: 'classic', label: 'Classic Mode' },
@@ -72,9 +82,12 @@ function renderPlayerBoard() {
         info = '<span class="text-red-500">No data for this size</span>';
       }
     }
+    const hotelStyle = HOTEL_STYLES[hotel] || '';
     return `
       <tr class="border-b last:border-b-0">
-        <td class="py-2 pr-4 font-medium">${hotel}</td>
+        <td class="py-2 pr-4">
+          <span class="${hotelStyle}">${hotel}</span>
+        </td>
         <td class="py-2 pr-4">
           <span class="inline-block w-10 text-center bg-gray-100 rounded px-2">${
             size > 0 ? size : '-'
