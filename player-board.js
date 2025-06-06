@@ -368,11 +368,14 @@ function renderMergeModal(acquireState) {
         <li><span class="font-bold">Keep</span>: Hold your stock in case a new ${acquired} chain is founded later.</li>
         <li><span class="font-bold">Sell</span>: Sell to the bank for <span class="font-bold">${sellPriceDisplay}</span> per share.</li>
         <li><span class="font-bold">Swap</span>: Trade 2 shares of ${acquired} for 1 share of ${survivor} (if available).
-        <ul class="list-disc list-inside ml-8"><li><span class="${HOTEL_STYLES[acquired]}">${acquired}</span> <span class="${HOTEL_STYLES[acquired]}">${acquired}</span> &rarr; <span class="${HOTEL_STYLES[survivor]}">${survivor}</span></li></ul>
+          <ul class="list-disc list-inside mb-2 ml-8"><li><span class="${HOTEL_STYLES[acquired]}">${acquired}</span> <span class="${HOTEL_STYLES[acquired]}">${acquired}</span> &rarr; <span class="${HOTEL_STYLES[survivor]}">${survivor}</span></li></ul>
         </li>
       </ul>
       ${quantityTable}
-      <button id="close-merge-modal" class="mt-2 px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">Close</button>
+      <div class="flex gap-4 justify-end mt-4">
+        <button id="abort-merge-modal" class="px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">Abort</button>
+        <button id="complete-merge-modal" class="px-4 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700">Complete Merge</button>
+      </div>
     `;
   }
 
@@ -393,8 +396,24 @@ function renderMergeModal(acquireState) {
     modal.remove();
   }
   document.getElementById('merge-modal-x').onclick = closeModal;
-  const closeBtn = document.getElementById('close-merge-modal');
-  if (closeBtn) closeBtn.onclick = closeModal;
+  const abortBtn = document.getElementById('abort-merge-modal');
+  if (abortBtn) abortBtn.onclick = closeModal;
+  // Complete Merge logic
+  const completeBtn = document.getElementById('complete-merge-modal');
+  if (completeBtn)
+    completeBtn.onclick = () => {
+      // Update hotel sizes
+      const acquiredSize = state.hotelSizes[acquired];
+      const survivorSize = state.hotelSizes[survivor];
+      state.hotelSizes[survivor] =
+        (parseInt(survivorSize, 10) || 0) +
+        (parseInt(acquiredSize, 10) || 0) +
+        1;
+      state.hotelSizes[acquired] = 0;
+      saveState(state);
+      closeModal();
+      renderPlayerBoard();
+    };
 
   // Choice form logic
   const form = document.getElementById('choose-acquired-form');
