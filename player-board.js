@@ -94,12 +94,17 @@ function renderPlayerBoard() {
     const hotelStyle = HOTEL_STYLES[hotel] || '';
     const checked = state.mergeSelection.includes(hotel);
     const isActive = size > 0;
+    const isSafe = size >= 11;
     const disabled =
       !isActive || (!checked && state.mergeSelection.length >= 2);
+    // Reserve space for the safe icon (24px)
+    const safeIcon = isSafe
+      ? '<span class="inline-block align-middle ml-1 text-green-600" title="Safe"><svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z"/></svg></span>'
+      : '<span class="inline-block align-middle ml-1" style="width:24px;height:20px;"></span>';
     return `
       <tr class="border-b last:border-b-0">
         <td class="py-2 pr-4 w-32 whitespace-nowrap">
-          <span class="${hotelStyle}">${hotel}</span>
+          <span class="${hotelStyle}">${hotel}</span>${safeIcon}
         </td>
         <td class="py-2 pr-4 flex items-center gap-2">
           <input type="number" min="2" max="99" step="1" value="${
