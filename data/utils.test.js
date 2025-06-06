@@ -183,4 +183,23 @@ function defaultTests() {
       `${hotel}, size 41 (tycoon) returns correct data for 41+ bracket [large, tycoon, column-3]`
     );
   }
+
+  // we're seeing problems with Tycoon / American / 2 in the UI, so let's explicitly test it here
+  assertEqual(
+    getHotelChainData('tycoon', 'American', 2),
+    {
+      buySellPrice: 300,
+      bonuses: { primary: 3000, secondary: 2200, tertiary: 1500 },
+    },
+    'American, size 2 (tycoon) returns correct data [ui confirmation]'
+  );
+  // we probably have a similar problem for Tycoon / Imperial / 2
+  assertEqual(
+    getHotelChainData('tycoon', 'Imperial', 2),
+    {
+      buySellPrice: 400,
+      bonuses: { primary: 4000, secondary: 3000, tertiary: 2000 },
+    },
+    'Imperial, size 2 (tycoon) returns correct data [ui confirmation]'
+  );
 }

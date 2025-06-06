@@ -3,48 +3,21 @@ import { classicTable, classicHotelNameToColumn } from './classic.js';
 // import { classicTable, hotelNameToColumn as classicHotelNameToColumn } from './classic.js'; // For future use
 
 /**
- * Map an integer size to the correct size bracket key for a given column.
- * @param {string} column - The column key ('column-1', 'column-2', 'column-3').
+ * Map an integer size to the correct size bracket key (works for all columns).
  * @param {number} size - The integer size of the hotel chain.
  * @returns {string|number|null} The correct key for the data table, or null if out of range.
  */
-function getSizeBracketKey(column, size) {
+function getSizeBracketKey(size) {
   if (typeof size !== 'number' || size < 2) return null;
-  if (column === 'column-1') {
-    if (size === 2) return 2;
-    if (size === 3) return 3;
-    if (size === 4) return 4;
-    if (size === 5) return 5;
-    if (size >= 6 && size <= 10) return '6-10';
-    if (size >= 11 && size <= 20) return '11-20';
-    if (size >= 21 && size <= 30) return '21-30';
-    if (size >= 31 && size <= 40) return '31-40';
-    if (size >= 41) return '41+';
-  } else if (column === 'column-2') {
-    if (size === 3) return 3;
-    if (size === 4) return 4;
-    if (size === 5) return 5;
-    if (size >= 6 && size <= 10) return '6-10';
-    if (size >= 11 && size <= 20) return '11-20';
-    if (size >= 21 && size <= 30) return '21-30';
-    if (size >= 31 && size <= 40) return '31-40';
-    if (size >= 41 && size <= 50) return '41+';
-    if (size >= 51 && size <= 60) return '41+_1';
-    if (size >= 61 && size <= 70) return '41+_2';
-    if (size >= 71) return '41+_3';
-  } else if (column === 'column-3') {
-    if (size === 4) return 4;
-    if (size === 5) return 5;
-    if (size >= 6 && size <= 10) return '6-10';
-    if (size >= 11 && size <= 20) return '11-20';
-    if (size >= 21 && size <= 30) return '21-30';
-    if (size >= 31 && size <= 40) return '31-40';
-    if (size >= 41 && size <= 50) return '41+';
-    if (size >= 51 && size <= 60) return '41+_1';
-    if (size >= 61 && size <= 70) return '41+_2';
-    if (size >= 71 && size <= 80) return '41+_3';
-    if (size >= 81) return '41+_4';
-  }
+  if (size === 2) return 2;
+  if (size === 3) return 3;
+  if (size === 4) return 4;
+  if (size === 5) return 5;
+  if (size >= 6 && size <= 10) return '6-10';
+  if (size >= 11 && size <= 20) return '11-20';
+  if (size >= 21 && size <= 30) return '21-30';
+  if (size >= 31 && size <= 40) return '31-40';
+  if (size >= 41) return '41+';
   return null;
 }
 
@@ -79,7 +52,7 @@ export function getHotelChainData(gameMode, hotelName, chainSize) {
     if (!column) return null;
     const table = tycoonTable[column];
     if (!table) return null;
-    const bracketKey = getSizeBracketKey(column, chainSize);
+    const bracketKey = getSizeBracketKey(chainSize);
     if (!bracketKey) return null;
     return table[bracketKey] || null;
   }
@@ -88,7 +61,7 @@ export function getHotelChainData(gameMode, hotelName, chainSize) {
     if (!column) return null;
     const table = classicTable[column];
     if (!table) return null;
-    const bracketKey = getSizeBracketKey(column, chainSize);
+    const bracketKey = getSizeBracketKey(chainSize);
     if (!bracketKey) return null;
     return table[bracketKey] || null;
   }
