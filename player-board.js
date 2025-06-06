@@ -93,7 +93,9 @@ function renderPlayerBoard() {
     }
     const hotelStyle = HOTEL_STYLES[hotel] || '';
     const checked = state.mergeSelection.includes(hotel);
-    const disabled = !checked && state.mergeSelection.length >= 2;
+    const isActive = size > 0;
+    const disabled =
+      !isActive || (!checked && state.mergeSelection.length >= 2);
     return `
       <tr class="border-b last:border-b-0">
         <td class="py-2 pr-4 w-32 whitespace-nowrap">
