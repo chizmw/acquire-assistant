@@ -29,6 +29,15 @@ function defaultTests() {
     'Sackson, size 2 (tycoon) returns correct data'
   );
 
+  assertEqual(
+    getHotelChainData('classic', 'Sackson', 2),
+    {
+      buySellPrice: 200,
+      bonuses: { primary: 2000, secondary: 1000 },
+    },
+    'Sackson, size 2 (classic) returns correct data'
+  );
+
   // Test 2: American, size 3 (column-2)
   assertEqual(
     getHotelChainData('tycoon', 'American', 3),
@@ -39,6 +48,15 @@ function defaultTests() {
     'American, size 3 (tycoon) returns correct data'
   );
 
+  assertEqual(
+    getHotelChainData('classic', 'American', 3),
+    {
+      buySellPrice: 400,
+      bonuses: { primary: 4000, secondary: 2000 },
+    },
+    'American, size 3 (classic) returns correct data'
+  );
+
   // Test 3: Imperial, size 35 (column-3, should map to '31-40')
   assertEqual(
     getHotelChainData('tycoon', 'Imperial', 35),
@@ -47,6 +65,14 @@ function defaultTests() {
       bonuses: { primary: 11000, secondary: 7700, tertiary: 5500 },
     },
     'Imperial, size 35 (tycoon) returns correct data for 31-40 bracket'
+  );
+  assertEqual(
+    getHotelChainData('classic', 'Imperial', 35),
+    {
+      buySellPrice: 1100,
+      bonuses: { primary: 11000, secondary: 5500 },
+    },
+    'Imperial, size 35 (classic) returns correct data for 31-40 bracket'
   );
 
   // Test 4: Unknown hotel name
@@ -64,4 +90,22 @@ function defaultTests() {
   );
 
   // Add more tests below as needed...
+  // Sackson, size 39 (column-1)
+  assertEqual(
+    getHotelChainData('tycoon', 'Sackson', 39),
+    {
+      buySellPrice: 900,
+      bonuses: { primary: 9000, secondary: 6200, tertiary: 4500 },
+    },
+    'Sackson, size 2 (tycoon) returns correct data'
+  );
+
+  assertEqual(
+    getHotelChainData('classic', 'Sackson', 39),
+    {
+      buySellPrice: 900,
+      bonuses: { primary: 9000, secondary: 4500 },
+    },
+    'Sackson, size 2 (classic) returns correct data'
+  );
 }
