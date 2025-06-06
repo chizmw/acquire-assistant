@@ -27,10 +27,29 @@ const MODES = [
   { value: 'classic', label: 'Classic Mode' },
 ];
 
-let state = {
-  mode: 'tycoon',
-  hotelSizes: Object.fromEntries(HOTEL_NAMES.map((name) => [name, 0])),
-};
+function loadState() {
+  let mode = 'tycoon';
+  let hotelSizes = Object.fromEntries(HOTEL_NAMES.map((name) => [name, 0]));
+  try {
+    const storedMode = localStorage.getItem('acquire_mode');
+    if (storedMode) mode = storedMode;
+    const storedSizes = localStorage.getItem('acquire_hotelSizes');
+    if (storedSizes) hotelSizes = JSON.parse(storedSizes);
+  } catch (e) {}
+  return { mode, hotelSizes };
+}
+
+function saveState(state) {
+  try {
+    localStorage.setItem('acquire_mode', state.mode);
+    localStorage.setItem(
+      'acquire_hotelSizes',
+      JSON.stringify(state.hotelSizes)
+    );
+  } catch (e) {}
+}
+
+let state = loadState();
 
 function renderPlayerBoard() {
   const root = document.getElementById('player-board-root');
@@ -118,6 +137,7 @@ function renderPlayerBoard() {
   // Add event listeners
   document.getElementById('mode-select').addEventListener('change', (e) => {
     state.mode = e.target.value;
+    saveState(state);
     renderPlayerBoard();
   });
 
@@ -127,6 +147,7 @@ function renderPlayerBoard() {
       const hotel = e.currentTarget.getAttribute('data-hotel');
       const current = state.hotelSizes[hotel] || 0;
       state.hotelSizes[hotel] = current === 0 ? 2 : current + 1;
+      saveState(state);
       renderPlayerBoard();
     });
   });
