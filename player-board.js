@@ -125,7 +125,8 @@ function renderPlayerBoard() {
   root.querySelectorAll('button[data-hotel]').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const hotel = e.currentTarget.getAttribute('data-hotel');
-      state.hotelSizes[hotel] = (state.hotelSizes[hotel] || 0) + 1;
+      const current = state.hotelSizes[hotel] || 0;
+      state.hotelSizes[hotel] = current === 0 ? 2 : current + 1;
       renderPlayerBoard();
     });
   });
