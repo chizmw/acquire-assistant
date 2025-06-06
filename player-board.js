@@ -368,7 +368,7 @@ function renderMergeModal(acquireState) {
         <li><span class="font-bold">Keep</span>: Hold your stock in case a new ${acquired} chain is founded later.</li>
         <li><span class="font-bold">Sell</span>: Sell to the bank for <span class="font-bold">${sellPriceDisplay}</span> per share.</li>
         <li><span class="font-bold">Swap</span>: Trade 2 shares of ${acquired} for 1 share of ${survivor} (if available).
-          <ul class="list-disc list-inside mb-2 ml-8"><li><span class="${HOTEL_STYLES[acquired]}">${acquired}</span> <span class="${HOTEL_STYLES[acquired]}">${acquired}</span> &rarr; <span class="${HOTEL_STYLES[survivor]}">${survivor}</span></li></ul>
+          <ul class="list-disc list-inside mb-2 ml-8"><li><span class="${HOTEL_STYLES[acquired]}">${acquired}</span> <span class="${HOTEL_STYLES[acquired]}">${acquired}</span> &rarr; <span class="${HOTEL_STYLES[survivor]}">${survivor}</span></li></ult com>
         </li>
       </ul>
       ${quantityTable}
@@ -410,6 +410,7 @@ function renderMergeModal(acquireState) {
         (parseInt(acquiredSize, 10) || 0) +
         1;
       state.hotelSizes[acquired] = 0;
+      state.mergeSelection = [];
       saveState(state);
       closeModal();
       renderPlayerBoard();
