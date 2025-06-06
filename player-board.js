@@ -106,9 +106,9 @@ function renderPlayerBoard() {
           <span class="${hotelStyle}">${hotel}</span>
         </td>
         <td class="py-2 pr-4 flex items-center gap-2">
-          <span class="inline-block w-10 text-center bg-gray-100 rounded px-2">${
-            size > 0 ? size : '-'
-          }</span>
+          <input type="number" min="2" max="99" step="1" value="${
+            size > 0 ? size : ''
+          }" data-hotel="${hotel}" class="w-14 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none" aria-label="Set size for ${hotel}" />
           <button type="button" class="ml-1 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Increase size for ${hotel}" data-hotel="${hotel}">+</button>
         </td>
         <td class="py-2 text-right">${buySell}</td>
@@ -153,6 +153,33 @@ function renderPlayerBoard() {
       state.hotelSizes[hotel] = current === 0 ? 2 : current + 1;
       saveState(state);
       renderPlayerBoard();
+    });
+  });
+
+  // Add event listeners for size inputs
+  root.querySelectorAll('input[type="number"][data-hotel]').forEach((input) => {
+    input.addEventListener('change', (e) => {
+      const hotel = e.target.getAttribute('data-hotel');
+      let value = parseInt(e.target.value, 10);
+      if (isNaN(value) || value < 2) value = 2;
+      if (value > 99) value = 99;
+      state.hotelSizes[hotel] = value;
+      saveState(state);
+      renderPlayerBoard();
+    });
+    input.addEventListener('blur', (e) => {
+      const hotel = e.target.getAttribute('data-hotel');
+      let value = parseInt(e.target.value, 10);
+      if (isNaN(value) || value < 2) value = 2;
+      if (value > 99) value = 99;
+      state.hotelSizes[hotel] = value;
+      saveState(state);
+      renderPlayerBoard();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.target.blur();
+      }
     });
   });
 }
