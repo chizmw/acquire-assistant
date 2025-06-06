@@ -1,0 +1,9 @@
+{
+  "name": "ghpages-acquire-assistant",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Acquire board game assistant app (2024 edition)",
+  "main": "index.js",
+  "author": "",
+  "license": "MIT"
+}
