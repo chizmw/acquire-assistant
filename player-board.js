@@ -111,10 +111,10 @@ function renderPlayerBoard() {
           }</span>
           <button type="button" class="ml-1 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Increase size for ${hotel}" data-hotel="${hotel}">+</button>
         </td>
-        <td class="py-2">${buySell}</td>
-        <td class="py-2">${primary}</td>
-        <td class="py-2">${secondary}</td>
-        <td class="py-2">${tertiary}</td>
+        <td class="py-2 text-right">${buySell}</td>
+        <td class="py-2 text-right">${primary}</td>
+        <td class="py-2 text-right">${secondary}</td>
+        <td class="py-2 text-right">${tertiary}</td>
       </tr>
     `;
   }).join('');
@@ -126,10 +126,10 @@ function renderPlayerBoard() {
         <tr class="border-b">
           <th class="py-2 pr-4 w-32 whitespace-nowrap">Hotel</th>
           <th class="py-2 pr-4">Size</th>
-          <th class="py-2">Buy/Sell</th>
-          <th class="py-2">Primary</th>
-          <th class="py-2">Secondary</th>
-          <th class="py-2">Tertiary</th>
+          <th class="py-2 text-right">Buy/Sell</th>
+          <th class="py-2 text-right">Primary</th>
+          <th class="py-2 text-right">Secondary</th>
+          <th class="py-2 text-right">Tertiary</th>
         </tr>
       </thead>
       <tbody>
