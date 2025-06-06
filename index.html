@@ -5,11 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Acquire Assistant (2024)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background-color: #fff8e1;
+      }
+      .acquire-gradient {
+        background: linear-gradient(90deg, #f9d423 0%, #ff4e50 100%);
+      }
+      .acquire-nav a {
+        transition: color 0.2s;
+      }
+      .acquire-nav a:hover,
+      .acquire-nav a:focus {
+        color: #009688 !important;
+      }
+    </style>
   </head>
-  <body class="bg-gray-50 min-h-screen flex flex-col">
+  <body class="min-h-screen flex flex-col">
     <!-- Navigation Bar -->
     <nav
-      class="bg-blue-900 text-white px-4 py-3 flex items-center justify-between shadow"
+      class="acquire-gradient text-white px-4 py-3 flex items-center justify-between shadow acquire-nav"
     >
       <div class="flex items-center gap-2">
         <span class="font-bold text-lg tracking-wide">Acquire Assistant</span>
