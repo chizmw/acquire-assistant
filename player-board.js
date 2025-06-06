@@ -367,7 +367,9 @@ function renderMergeModal(acquireState) {
       <ul class="list-disc list-inside mb-4">
         <li><span class="font-bold">Keep</span>: Hold your stock in case a new ${acquired} chain is founded later.</li>
         <li><span class="font-bold">Sell</span>: Sell to the bank for <span class="font-bold">${sellPriceDisplay}</span> per share.</li>
-        <li><span class="font-bold">Swap</span>: Trade 2 shares of ${acquired} for 1 share of ${survivor} (if available).</li>
+        <li><span class="font-bold">Swap</span>: Trade 2 shares of ${acquired} for 1 share of ${survivor} (if available).
+        <ul class="list-disc list-inside ml-8"><li><span class="${HOTEL_STYLES[acquired]}">${acquired}</span> <span class="${HOTEL_STYLES[acquired]}">${acquired}</span> &rarr; <span class="${HOTEL_STYLES[survivor]}">${survivor}</span></li></ul>
+        </li>
       </ul>
       ${quantityTable}
       <button id="close-merge-modal" class="mt-2 px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">Close</button>
