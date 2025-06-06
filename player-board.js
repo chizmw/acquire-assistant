@@ -30,13 +30,16 @@ const MODES = [
 function loadState() {
   let mode = 'tycoon';
   let hotelSizes = Object.fromEntries(HOTEL_NAMES.map((name) => [name, 0]));
+  let mergeSelection = [];
   try {
     const storedMode = localStorage.getItem('acquire_mode');
     if (storedMode) mode = storedMode;
     const storedSizes = localStorage.getItem('acquire_hotelSizes');
     if (storedSizes) hotelSizes = JSON.parse(storedSizes);
+    const storedMergeSelection = localStorage.getItem('acquire_mergeSelection');
+    if (storedMergeSelection) mergeSelection = JSON.parse(storedMergeSelection);
   } catch (e) {}
-  return { mode, hotelSizes };
+  return { mode, hotelSizes, mergeSelection };
 }
 
 function saveState(state) {
@@ -45,6 +48,10 @@ function saveState(state) {
     localStorage.setItem(
       'acquire_hotelSizes',
       JSON.stringify(state.hotelSizes)
+    );
+    localStorage.setItem(
+      'acquire_mergeSelection',
+      JSON.stringify(state.mergeSelection)
     );
   } catch (e) {}
 }
@@ -85,6 +92,8 @@ function renderPlayerBoard() {
       }
     }
     const hotelStyle = HOTEL_STYLES[hotel] || '';
+    const checked = state.mergeSelection.includes(hotel);
+    const disabled = !checked && state.mergeSelection.length >= 2;
     return `
       <tr class="border-b last:border-b-0">
         <td class="py-2 pr-4 w-32 whitespace-nowrap">
@@ -95,6 +104,11 @@ function renderPlayerBoard() {
             size > 0 ? size : ''
           }" data-hotel="${hotel}" class="w-14 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none" aria-label="Set size for ${hotel}" />
           <button type="button" class="ml-1 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Increase size for ${hotel}" data-hotel="${hotel}">+</button>
+        </td>
+        <td class="py-2 pr-4 text-center">
+          <input type="checkbox" data-hotel="${hotel}" class="merge-checkbox w-5 h-5" ${
+      checked ? 'checked' : ''
+    } ${disabled ? 'disabled' : ''} aria-label="Select ${hotel} for merge" />
         </td>
         <td class="py-2 text-right">${buySell}</td>
         <td class="py-2 text-right">${primary}</td>
@@ -127,6 +141,7 @@ function renderPlayerBoard() {
         <tr class="border-b">
           <th class="py-2 pr-4 w-32 whitespace-nowrap">Hotel</th>
           <th class="py-2 pr-4">Size</th>
+          <th class="py-2 pr-4 text-center">Merge?</th>
           <th class="py-2 text-right">Buy/Sell</th>
           <th class="py-2 text-right">Primary</th>
           <th class="py-2 text-right">Secondary</th>
@@ -182,6 +197,22 @@ function renderPlayerBoard() {
       if (e.key === 'Enter') {
         e.target.blur();
       }
+    });
+  });
+
+  // Add event listeners for merge checkboxes
+  root.querySelectorAll('.merge-checkbox').forEach((checkbox) => {
+    checkbox.addEventListener('change', (e) => {
+      const hotel = e.target.getAttribute('data-hotel');
+      if (e.target.checked) {
+        if (state.mergeSelection.length < 2) {
+          state.mergeSelection.push(hotel);
+        }
+      } else {
+        state.mergeSelection = state.mergeSelection.filter((h) => h !== hotel);
+      }
+      saveState(state);
+      renderPlayerBoard();
     });
   });
 }
