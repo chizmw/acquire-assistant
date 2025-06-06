@@ -38,10 +38,13 @@
       }
     </style>
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body
+    class="min-h-screen flex flex-col"
+    style="width: 100vw; overflow-x: hidden"
+  >
     <!-- Navigation Bar -->
     <nav
-      class="acquire-gradient text-white px-4 py-3 flex items-center justify-between shadow acquire-nav"
+      class="acquire-gradient text-white px-4 py-3 flex items-center justify-between shadow acquire-nav fixed left-0 right-0 top-0 z-40"
     >
       <div class="flex items-center gap-2">
         <span class="font-bold text-lg tracking-wide">Acquire Assistant</span>
@@ -57,7 +60,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col items-center justify-start p-6">
+    <main class="flex-1 flex flex-col items-center justify-start p-6 pt-24">
       <section class="w-full max-w-3xl bg-white rounded shadow p-6 mt-6">
         <div id="player-board-root">
           <!-- Dynamic player board UI will be rendered here -->
