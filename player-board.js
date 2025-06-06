@@ -136,7 +136,28 @@ function renderPlayerBoard() {
     `;
   }).join('');
 
-  // Mode selector
+  // Merge button row (centred under Size and Merge? columns)
+  const mergeButtonActive = state.mergeSelection.length === 2;
+  const mergeButton = `
+    <button id="merge-btn" class="mx-auto px-4 py-2 rounded font-semibold shadow transition-colors block
+      ${
+        mergeButtonActive
+          ? 'bg-teal-600 text-white hover:bg-teal-700 cursor-pointer'
+          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+      }"
+      ${mergeButtonActive ? '' : 'disabled'}
+      style="min-width: 90px;"
+    >Merge</button>
+  `;
+  const mergeButtonRow = `
+    <tr>
+      <td></td>
+      <td colspan="2" class="py-3 text-center">${mergeButton}</td>
+      <td colspan="4"></td>
+    </tr>
+  `;
+
+  // Mode selector row (as before)
   const modeSelector = `
     <div class="flex justify-end mt-8 mb-2">
       <div class="flex items-center gap-4">
@@ -168,6 +189,7 @@ function renderPlayerBoard() {
       </thead>
       <tbody>
         ${hotelRows}
+        ${mergeButtonRow}
       </tbody>
     </table>
     ${modeSelector}
@@ -179,6 +201,17 @@ function renderPlayerBoard() {
     saveState(state);
     renderPlayerBoard();
   });
+
+  // Merge button event
+  const mergeBtn = document.getElementById('merge-btn');
+  if (mergeBtn) {
+    mergeBtn.addEventListener('click', () => {
+      if (state.mergeSelection.length === 2) {
+        alert('Merging: ' + state.mergeSelection.join(' & '));
+        // Future: handle merge logic here
+      }
+    });
+  }
 
   // Add event listeners for + buttons
   root.querySelectorAll('button[data-hotel]').forEach((btn) => {
