@@ -321,29 +321,38 @@ function renderMergeModal(acquireState) {
     const sellPriceDisplay = sellPrice
       ? `$${sellPrice.toLocaleString('en-GB')}`
       : '-';
-    // Quantity table (1-10), flipped: quantities on top row, sell values on second row
+    // Quantity table (1-20), four rows: quantities 1-10, 11-20 and their values
     let quantityTable = '';
     if (sellPrice) {
-      const qtyRow = Array.from(
+      const qtyRow1 = Array.from(
         { length: 10 },
         (_, i) => `<td class='py-1 px-2'>${i + 1}</td>`
       ).join('');
-      const valueRow = Array.from(
+      const valueRow1 = Array.from(
         { length: 10 },
         (_, i) =>
           `<td class='py-1 px-2'>$${((i + 1) * sellPrice).toLocaleString(
             'en-GB'
           )}</td>`
       ).join('');
+      const qtyRow2 = Array.from(
+        { length: 10 },
+        (_, i) => `<td class='py-1 px-2'>${i + 11}</td>`
+      ).join('');
+      const valueRow2 = Array.from(
+        { length: 10 },
+        (_, i) =>
+          `<td class='py-1 px-2'>$${((i + 11) * sellPrice).toLocaleString(
+            'en-GB'
+          )}</td>`
+      ).join('');
       quantityTable = `
         <table class="mt-2 mb-4 text-xs w-full text-center border border-gray-200 rounded">
           <tbody>
-            <tr class="bg-gray-100">
-              ${qtyRow}
-            </tr>
-            <tr>
-              ${valueRow}
-            </tr>
+            <tr class="bg-gray-100">${qtyRow1}</tr>
+            <tr>${valueRow1}</tr>
+            <tr class="bg-gray-100">${qtyRow2}</tr>
+            <tr>${valueRow2}</tr>
           </tbody>
         </table>
       `;
