@@ -85,7 +85,7 @@ function renderPlayerBoard() {
     const hotelStyle = HOTEL_STYLES[hotel] || '';
     return `
       <tr class="border-b last:border-b-0">
-        <td class="py-2 pr-4">
+        <td class="py-2 pr-4 w-32 whitespace-nowrap">
           <span class="${hotelStyle}">${hotel}</span>
         </td>
         <td class="py-2 pr-4">
@@ -103,7 +103,7 @@ function renderPlayerBoard() {
     <table class="w-full text-left bg-white rounded shadow">
       <thead>
         <tr class="border-b">
-          <th class="py-2 pr-4">Hotel</th>
+          <th class="py-2 pr-4 w-32 whitespace-nowrap">Hotel</th>
           <th class="py-2 pr-4">Size</th>
           <th class="py-2">Information</th>
         </tr>
