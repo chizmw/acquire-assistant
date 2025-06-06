@@ -207,8 +207,7 @@ function renderPlayerBoard() {
   if (mergeBtn) {
     mergeBtn.addEventListener('click', () => {
       if (state.mergeSelection.length === 2) {
-        alert('Merging: ' + state.mergeSelection.join(' & '));
-        // Future: handle merge logic here
+        renderMergeModal();
       }
     });
   }
@@ -266,6 +265,100 @@ function renderPlayerBoard() {
       renderPlayerBoard();
     });
   });
+}
+
+// Modal rendering and logic
+function renderMergeModal(acquireState) {
+  // Remove any existing modal
+  const existing = document.getElementById('merge-modal');
+  if (existing) existing.remove();
+
+  const [hotel1, hotel2] = state.mergeSelection;
+  const size1 = state.hotelSizes[hotel1];
+  const size2 = state.hotelSizes[hotel2];
+  let acquired = null;
+  let survivor = null;
+  let needChoice = false;
+  if (size1 === size2) {
+    needChoice = true;
+  } else if (size1 > size2) {
+    survivor = hotel1;
+    acquired = hotel2;
+  } else {
+    survivor = hotel2;
+    acquired = hotel1;
+  }
+
+  // Modal content
+  let modalContent = '';
+  if (needChoice && !acquireState?.chosen) {
+    modalContent = `
+      <div class="mb-4 text-lg font-semibold">Both hotel chains are the same size. The active player must choose which hotel chain is being acquired:</div>
+      <form id="choose-acquired-form" class="flex flex-col gap-2 mb-4">
+        <label class="flex items-center gap-2">
+          <input type="radio" name="acquired" value="${hotel1}" required />
+          <span class="${HOTEL_STYLES[hotel1]}">${hotel1}</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="acquired" value="${hotel2}" required />
+          <span class="${HOTEL_STYLES[hotel2]}">${hotel2}</span>
+        </label>
+        <button type="submit" class="mt-4 px-4 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700">Continue</button>
+      </form>
+    `;
+  } else {
+    if (needChoice) {
+      acquired = acquireState.chosen;
+      survivor = hotel1 === acquired ? hotel2 : hotel1;
+    }
+    // Get sell price for acquired hotel
+    const acquiredSize = state.hotelSizes[acquired];
+    const acquiredData = getHotelChainData(state.mode, acquired, acquiredSize);
+    const sellPrice =
+      acquiredData && acquiredData.buySellPrice
+        ? `$${acquiredData.buySellPrice.toLocaleString('en-GB')}`
+        : '-';
+    modalContent = `
+      <div class="mb-4 text-lg font-semibold">${survivor} is acquiring ${acquired}</div>
+      <div class="mb-2">Stockholder options for <span class="${HOTEL_STYLES[acquired]}">${acquired}</span>:</div>
+      <ul class="list-disc list-inside mb-4">
+        <li><span class="font-bold">Keep</span>: Hold your stock in case a new ${acquired} chain is founded later.</li>
+        <li><span class="font-bold">Sell</span>: Sell to the bank for <span class="font-bold">${sellPrice}</span> per share.</li>
+        <li><span class="font-bold">Swap</span>: Trade 2 shares of ${acquired} for 1 share of ${survivor} (if available).</li>
+      </ul>
+      <button id="close-merge-modal" class="mt-2 px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">Close</button>
+    `;
+  }
+
+  const modal = document.createElement('div');
+  modal.id = 'merge-modal';
+  modal.className =
+    'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40';
+  modal.innerHTML = `
+    <div class="bg-white rounded shadow-lg p-6 max-w-md w-full relative">
+      ${modalContent}
+      <button id="merge-modal-x" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Close logic
+  function closeModal() {
+    modal.remove();
+  }
+  document.getElementById('merge-modal-x').onclick = closeModal;
+  const closeBtn = document.getElementById('close-merge-modal');
+  if (closeBtn) closeBtn.onclick = closeModal;
+
+  // Choice form logic
+  const form = document.getElementById('choose-acquired-form');
+  if (form) {
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const chosen = form.elements['acquired'].value;
+      renderMergeModal({ chosen });
+    };
+  }
 }
 
 document.addEventListener('DOMContentLoaded', renderPlayerBoard);
