@@ -69,6 +69,7 @@ function renderPlayerBoard() {
     let primary = '-';
     let secondary = '-';
     let tertiary = '-';
+    let isSafe = false;
     if (size > 0) {
       const data = getHotelChainData(state.mode, hotel, size);
       if (data) {
@@ -89,16 +90,18 @@ function renderPlayerBoard() {
           data.bonuses.tertiary !== undefined && data.bonuses.tertiary !== null
             ? `$${data.bonuses.tertiary.toLocaleString('en-GB')}`
             : '-';
+        isSafe = !!data.isSafe;
       }
     }
     const hotelStyle = HOTEL_STYLES[hotel] || '';
     const checked = state.mergeSelection.includes(hotel);
     const isActive = size > 0;
-    const isSafe = Number(size) >= 11;
     // Only allow at most one 'safe' hotel to be selected for merging
-    const numSafeSelected = state.mergeSelection.filter(
-      (h) => Number(state.hotelSizes[h]) >= 11
-    ).length;
+    const numSafeSelected = state.mergeSelection.filter((h) => {
+      const s = state.hotelSizes[h];
+      const d = getHotelChainData(state.mode, h, s);
+      return d && d.isSafe;
+    }).length;
     const wouldBeSecondSafe = !checked && isSafe && numSafeSelected >= 1;
     const disabled =
       !isActive ||

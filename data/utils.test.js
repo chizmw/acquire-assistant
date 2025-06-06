@@ -25,6 +25,7 @@ function defaultTests() {
     {
       buySellPrice: 200,
       bonuses: { primary: 2000, secondary: 1500, tertiary: 1000 },
+      isSafe: false,
     },
     'Sackson, size 2 (tycoon) returns correct data'
   );
@@ -34,6 +35,7 @@ function defaultTests() {
     {
       buySellPrice: 200,
       bonuses: { primary: 2000, secondary: 1000 },
+      isSafe: false,
     },
     'Sackson, size 2 (classic) returns correct data'
   );
@@ -44,6 +46,7 @@ function defaultTests() {
     {
       buySellPrice: 400,
       bonuses: { primary: 4000, secondary: 3000, tertiary: 2000 },
+      isSafe: false,
     },
     'American, size 3 (tycoon) returns correct data'
   );
@@ -53,6 +56,7 @@ function defaultTests() {
     {
       buySellPrice: 400,
       bonuses: { primary: 4000, secondary: 2000 },
+      isSafe: false,
     },
     'American, size 3 (classic) returns correct data'
   );
@@ -63,6 +67,7 @@ function defaultTests() {
     {
       buySellPrice: 1100,
       bonuses: { primary: 11000, secondary: 7700, tertiary: 5500 },
+      isSafe: true,
     },
     'Imperial, size 35 (tycoon) returns correct data for 31-40 bracket'
   );
@@ -71,6 +76,7 @@ function defaultTests() {
     {
       buySellPrice: 1100,
       bonuses: { primary: 11000, secondary: 5500 },
+      isSafe: true,
     },
     'Imperial, size 35 (classic) returns correct data for 31-40 bracket'
   );
@@ -96,6 +102,7 @@ function defaultTests() {
     {
       buySellPrice: 900,
       bonuses: { primary: 9000, secondary: 6200, tertiary: 4500 },
+      isSafe: true,
     },
     'Sackson, size 39 (tycoon) returns correct data'
   );
@@ -105,8 +112,29 @@ function defaultTests() {
     {
       buySellPrice: 900,
       bonuses: { primary: 9000, secondary: 4500 },
+      isSafe: true,
     },
     'Sackson, size 39 (classic) returns correct data'
+  );
+
+  // Edge case: Sackson, size 10 (not safe), size 11 (safe)
+  assertEqual(
+    getHotelChainData('tycoon', 'Sackson', 10),
+    {
+      buySellPrice: 600,
+      bonuses: { primary: 6000, secondary: 4200, tertiary: 3000 },
+      isSafe: false,
+    },
+    'Sackson, size 10 (tycoon) is not safe'
+  );
+  assertEqual(
+    getHotelChainData('tycoon', 'Sackson', 11),
+    {
+      buySellPrice: 700,
+      bonuses: { primary: 7000, secondary: 5000, tertiary: 3500 },
+      isSafe: true,
+    },
+    'Sackson, size 11 (tycoon) is safe'
   );
 
   // large classic hotels
@@ -118,6 +146,7 @@ function defaultTests() {
       {
         buySellPrice: 1000,
         bonuses: { primary: 10000, secondary: 5000 },
+        isSafe: true,
       },
       `${hotel}, size 41 (classic) returns correct data for 41+ bracket [large, classic, column-1]`
     );
@@ -130,11 +159,12 @@ function defaultTests() {
       {
         buySellPrice: 1100,
         bonuses: { primary: 11000, secondary: 5500 },
+        isSafe: true,
       },
       `${hotel}, size 41 (classic) returns correct data for 41+ bracket [large, classic, column-2]`
     );
   }
-  // loop through Imperial, Tower, and Sackson (column 3)
+  // loop through Continental, Imperial (column 3)
   const largeClassicColumn3Hotels = ['Continental', 'Imperial'];
   for (const hotel of largeClassicColumn3Hotels) {
     assertEqual(
@@ -142,6 +172,7 @@ function defaultTests() {
       {
         buySellPrice: 1200,
         bonuses: { primary: 12000, secondary: 6000 },
+        isSafe: true,
       },
       `${hotel}, size 41 (classic) returns correct data for 41+ bracket [large, classic, column-3]`
     );
@@ -155,6 +186,7 @@ function defaultTests() {
       {
         buySellPrice: 1000,
         bonuses: { primary: 10000, secondary: 7000, tertiary: 5000 },
+        isSafe: true,
       },
       `${hotel}, size 41 (tycoon) returns correct data for 41+ bracket [large, tycoon, column-1]`
     );
@@ -167,6 +199,7 @@ function defaultTests() {
       {
         buySellPrice: 1100,
         bonuses: { primary: 11000, secondary: 7700, tertiary: 5500 },
+        isSafe: true,
       },
       `${hotel}, size 41 (tycoon) returns correct data for 41+ bracket [large, tycoon, column-2]`
     );
@@ -179,6 +212,7 @@ function defaultTests() {
       {
         buySellPrice: 1200,
         bonuses: { primary: 12000, secondary: 8200, tertiary: 6000 },
+        isSafe: true,
       },
       `${hotel}, size 41 (tycoon) returns correct data for 41+ bracket [large, tycoon, column-3]`
     );
@@ -190,6 +224,7 @@ function defaultTests() {
     {
       buySellPrice: 300,
       bonuses: { primary: 3000, secondary: 2200, tertiary: 1500 },
+      isSafe: false,
     },
     'American, size 2 (tycoon) returns correct data [ui confirmation]'
   );
@@ -199,6 +234,7 @@ function defaultTests() {
     {
       buySellPrice: 400,
       bonuses: { primary: 4000, secondary: 3000, tertiary: 2000 },
+      isSafe: false,
     },
     'Imperial, size 2 (tycoon) returns correct data [ui confirmation]'
   );
