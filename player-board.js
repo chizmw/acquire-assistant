@@ -293,15 +293,19 @@ function renderMergeModal(acquireState) {
   let modalContent = '';
   if (needChoice && !acquireState?.chosen) {
     modalContent = `
-      <div class="mb-4 text-lg font-semibold">Both hotel chains are the same size. The active player must choose which hotel chain is being acquired:</div>
+      <div class="mb-4 text-lg font-semibold">Both hotel chains are the same size. The active player must choose which hotel chain is being <u>acquired</u>:</div>
       <form id="choose-acquired-form" class="flex flex-col gap-2 mb-4">
         <label class="flex items-center gap-2">
           <input type="radio" name="acquired" value="${hotel1}" required />
           <span class="${HOTEL_STYLES[hotel1]}">${hotel1}</span>
+          will cease to exist - long live
+          <span class="${HOTEL_STYLES[hotel2]}">${hotel2}</span>
         </label>
         <label class="flex items-center gap-2">
           <input type="radio" name="acquired" value="${hotel2}" required />
           <span class="${HOTEL_STYLES[hotel2]}">${hotel2}</span>
+          will cease to exist - long live
+          <span class="${HOTEL_STYLES[hotel1]}">${hotel1}</span>
         </label>
         <button type="submit" class="mt-4 px-4 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700">Continue</button>
       </form>
