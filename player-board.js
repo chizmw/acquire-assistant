@@ -319,7 +319,7 @@ function renderMergeModal(acquireState) {
         ? `$${acquiredData.buySellPrice.toLocaleString('en-GB')}`
         : '-';
     modalContent = `
-      <div class="mb-4 text-lg font-semibold">${survivor} is acquiring ${acquired}</div>
+      <div class="mb-4 text-lg font-semibold"><span class="${HOTEL_STYLES[survivor]}">${survivor}</span> is acquiring <span class="${HOTEL_STYLES[acquired]}">${acquired}</span></div>
       <div class="mb-2">Stockholder options for <span class="${HOTEL_STYLES[acquired]}">${acquired}</span>:</div>
       <ul class="list-disc list-inside mb-4">
         <li><span class="font-bold">Keep</span>: Hold your stock in case a new ${acquired} chain is founded later.</li>
