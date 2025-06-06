@@ -2,10 +2,54 @@ import { tycoonTable, hotelNameToColumn } from './tycoon.js';
 // import { classicTable, hotelNameToColumn as classicHotelNameToColumn } from './classic.js'; // For future use
 
 /**
+ * Map an integer size to the correct size bracket key for a given column.
+ * @param {string} column - The column key ('column-1', 'column-2', 'column-3').
+ * @param {number} size - The integer size of the hotel chain.
+ * @returns {string|number|null} The correct key for the data table, or null if out of range.
+ */
+function getSizeBracketKey(column, size) {
+  if (typeof size !== 'number' || size < 2) return null;
+  if (column === 'column-1') {
+    if (size === 2) return 2;
+    if (size === 3) return 3;
+    if (size === 4) return 4;
+    if (size === 5) return 5;
+    if (size >= 6 && size <= 10) return '6-10';
+    if (size >= 11 && size <= 20) return '11-20';
+    if (size >= 21 && size <= 30) return '21-30';
+    if (size >= 31 && size <= 40) return '31-40';
+    if (size >= 41) return '41+';
+  } else if (column === 'column-2') {
+    if (size === 2) return 2;
+    if (size === 3) return 3;
+    if (size === 4) return 4;
+    if (size === 5) return 5;
+    if (size >= 6 && size <= 10) return '6-10';
+    if (size >= 11 && size <= 20) return '11-20';
+    if (size >= 21 && size <= 30) return '21-30';
+    if (size >= 31 && size <= 40) return '31-40';
+    if (size >= 41 && size <= 50) return '41+';
+    if (size >= 51 && size <= 60) return '41+'; // 1100 row
+    if (size >= 61) return '41+'; // 1200 row (for future-proofing, but table only goes to 1200)
+  } else if (column === 'column-3') {
+    if (size === 2) return 2;
+    if (size === 3) return 3;
+    if (size === 4) return 4;
+    if (size === 5) return 5;
+    if (size >= 6 && size <= 10) return '6-10';
+    if (size >= 11 && size <= 20) return '11-20';
+    if (size >= 21 && size <= 30) return '21-30';
+    if (size >= 31 && size <= 40) return '31-40';
+    if (size >= 41) return '41+';
+  }
+  return null;
+}
+
+/**
  * Get the data block for a hotel chain given the game mode, hotel name, and chain size.
  * @param {string} gameMode - The game mode ('tycoon' or 'classic').
  * @param {string} hotelName - The name of the hotel chain.
- * @param {number|string} chainSize - The size of the hotel chain (number or size bracket string).
+ * @param {number} chainSize - The integer size of the hotel chain (number of tiles).
  * @returns {object|null} The relevant data block, or null if not found.
  */
 export function getHotelChainData(gameMode, hotelName, chainSize) {
@@ -14,8 +58,9 @@ export function getHotelChainData(gameMode, hotelName, chainSize) {
     if (!column) return null;
     const table = tycoonTable[column];
     if (!table) return null;
-    // Try direct match, then string match for bracketed sizes
-    return table[chainSize] || table[String(chainSize)] || null;
+    const bracketKey = getSizeBracketKey(column, chainSize);
+    if (!bracketKey) return null;
+    return table[bracketKey] || null;
   }
   // else if (gameMode === 'classic') {
   //   // Implement similar logic for classic mode when ready

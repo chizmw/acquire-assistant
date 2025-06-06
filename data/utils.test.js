@@ -14,6 +14,8 @@ function assertEqual(actual, expected, message) {
 }
 
 // Basic test cases for Tycoon Mode
+// All tests now use integer chain sizes
+
 defaultTests();
 
 function defaultTests() {
@@ -37,14 +39,14 @@ function defaultTests() {
     'American, size 3 (tycoon) returns correct data'
   );
 
-  // Test 3: Imperial, size '31-40' (column-3, string key)
+  // Test 3: Imperial, size 35 (column-3, should map to '31-40')
   assertEqual(
-    getHotelChainData('tycoon', 'Imperial', '31-40'),
+    getHotelChainData('tycoon', 'Imperial', 35),
     {
       buySellPrice: 1100,
       bonuses: { primary: 11000, secondary: 7700, tertiary: 5500 },
     },
-    "Imperial, size '31-40' (tycoon) returns correct data"
+    'Imperial, size 35 (tycoon) returns correct data for 31-40 bracket'
   );
 
   // Test 4: Unknown hotel name
@@ -54,11 +56,11 @@ function defaultTests() {
     'Unknown hotel name returns null'
   );
 
-  // Test 5: Invalid size
+  // Test 5: Invalid size (below minimum)
   assertEqual(
-    getHotelChainData('tycoon', 'Sackson', 999),
+    getHotelChainData('tycoon', 'Sackson', 1),
     null,
-    'Invalid size returns null'
+    'Invalid size (below 2) returns null'
   );
 
   // Add more tests below as needed...
