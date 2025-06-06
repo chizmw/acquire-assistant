@@ -94,9 +94,16 @@ function renderPlayerBoard() {
     const hotelStyle = HOTEL_STYLES[hotel] || '';
     const checked = state.mergeSelection.includes(hotel);
     const isActive = size > 0;
-    const isSafe = size >= 11;
+    const isSafe = Number(size) >= 11;
+    // Only allow at most one 'safe' hotel to be selected for merging
+    const numSafeSelected = state.mergeSelection.filter(
+      (h) => Number(state.hotelSizes[h]) >= 11
+    ).length;
+    const wouldBeSecondSafe = !checked && isSafe && numSafeSelected >= 1;
     const disabled =
-      !isActive || (!checked && state.mergeSelection.length >= 2);
+      !isActive ||
+      (!checked && state.mergeSelection.length >= 2) ||
+      wouldBeSecondSafe;
     // Reserve space for the safe icon (24px)
     const safeIcon = isSafe
       ? '<span class="inline-block align-middle ml-1 text-green-600" title="Safe"><svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 8V6a5 5 0 1110 0v2a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2zm2-2a3 3 0 116 0v2H7V6z" clip-rule="evenodd"/></svg></span>'
