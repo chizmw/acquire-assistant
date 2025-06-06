@@ -1,0 +1,63 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# .cursor/rules/ghpages.mdc
+
+# Purpose: Guide Cursor to generate a fully static, client-side JavaScript SPA
+# that is deployable to GitHub Pages without needing server-side support.
+
+project:
+  name: Static SPA for GitHub Pages
+  description: >
+    A single-page JavaScript application with no backend dependencies,
+    designed for static deployment on GitHub Pages. The app uses client-side
+    routing and builds into a directory that GitHub Pages can serve.
+
+goals:
+  - Pure front-end application using vanilla JS or lightweight libraries
+  - Fully static output (HTML, JS, CSS)
+  - Client-side routing with fallback support (404.html for GitHub Pages)
+  - Clean, modular code with ES Modules
+  - Responsive and accessible UI
+  - Build output goes in 'docs/' for GitHub Pages
+
+directory_structure:
+  src/: JavaScript source files (modular ES6+)
+  public/: Static assets (images, icons, etc.)
+  styles/: CSS or SCSS files
+  docs/: Final built output for deployment (GH Pages will serve this)
+  index.html: Root HTML file (in /docs for GH Pages)
+  404.html: Duplicate of index.html to support SPA fallback routing
+
+technical_constraints:
+  - No Node.js or backend code
+  - No server-side rendering
+  - All navigation must happen via JavaScript (History API or hash routing)
+  - Avoid any absolute paths (use relative URLs)
+  - Avoid usage of localStorage/sessionStorage for routing
+  - No dynamic imports from external domains
+  - All external libraries must be CDN-based or bundled
+
+preferred_technologies:
+  language: JavaScript (ES6+)
+  style: CSS (preferably modular or scoped)
+  routing: history-based with fallback, or hash-based (e.g., `/#/about`)
+  build_tool: optional (esbuild, Vite, or Rollup if needed)
+
+deployment:
+  - Target directory is `/docs` for GitHub Pages
+  - Ensure all final assets (HTML, JS, CSS, images) are in `/docs`
+  - CNAME file support if a custom domain is configured
+  - GitHub Pages setting should point to the `main` branch, `/docs` folder
+
+best_practices:
+  - Responsive layout (flexbox/grid)
+  - Semantic HTML5 structure
+  - Accessibility: use alt tags, ARIA roles, keyboard navigation
+  - Code splitting (if using build tool)
+  - Lazy-load large assets or images
+  - Minify HTML/CSS/JS for production
+  - Include `<base href="." />` in HTML for relative path resolution
+  - Redirect 404.html back to SPA entry point for unmatched routes
