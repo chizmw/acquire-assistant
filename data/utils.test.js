@@ -97,7 +97,7 @@ function defaultTests() {
       buySellPrice: 900,
       bonuses: { primary: 9000, secondary: 6200, tertiary: 4500 },
     },
-    'Sackson, size 2 (tycoon) returns correct data'
+    'Sackson, size 39 (tycoon) returns correct data'
   );
 
   assertEqual(
@@ -106,6 +106,81 @@ function defaultTests() {
       buySellPrice: 900,
       bonuses: { primary: 9000, secondary: 4500 },
     },
-    'Sackson, size 2 (classic) returns correct data'
+    'Sackson, size 39 (classic) returns correct data'
   );
+
+  // large classic hotels
+  // Loop through Sackson and Tower hotels
+  const largeClassicColumn1Hotels = ['Sackson', 'Tower'];
+  for (const hotel of largeClassicColumn1Hotels) {
+    assertEqual(
+      getHotelChainData('classic', hotel, 41),
+      {
+        buySellPrice: 1000,
+        bonuses: { primary: 10000, secondary: 5000 },
+      },
+      `${hotel}, size 41 (classic) returns correct data for 41+ bracket [large, classic, column-1]`
+    );
+  }
+  // loop through American, Festival, and Worldwide (column 2)
+  const largeClassicColumn2Hotels = ['American', 'Festival', 'Worldwide'];
+  for (const hotel of largeClassicColumn2Hotels) {
+    assertEqual(
+      getHotelChainData('classic', hotel, 41),
+      {
+        buySellPrice: 1100,
+        bonuses: { primary: 11000, secondary: 5500 },
+      },
+      `${hotel}, size 41 (classic) returns correct data for 41+ bracket [large, classic, column-2]`
+    );
+  }
+  // loop through Imperial, Tower, and Sackson (column 3)
+  const largeClassicColumn3Hotels = ['Continental', 'Imperial'];
+  for (const hotel of largeClassicColumn3Hotels) {
+    assertEqual(
+      getHotelChainData('classic', hotel, 41),
+      {
+        buySellPrice: 1200,
+        bonuses: { primary: 12000, secondary: 6000 },
+      },
+      `${hotel}, size 41 (classic) returns correct data for 41+ bracket [large, classic, column-3]`
+    );
+  }
+
+  // loop through large tycoon hotels
+  const largeTycoonColumn1Hotels = ['Sackson', 'Tower'];
+  for (const hotel of largeTycoonColumn1Hotels) {
+    assertEqual(
+      getHotelChainData('tycoon', hotel, 41),
+      {
+        buySellPrice: 1000,
+        bonuses: { primary: 10000, secondary: 7000, tertiary: 5000 },
+      },
+      `${hotel}, size 41 (tycoon) returns correct data for 41+ bracket [large, tycoon, column-1]`
+    );
+  }
+  // loop through large tycoon hotels
+  const largeTycoonColumn2Hotels = ['American', 'Festival', 'Worldwide'];
+  for (const hotel of largeTycoonColumn2Hotels) {
+    assertEqual(
+      getHotelChainData('tycoon', hotel, 41),
+      {
+        buySellPrice: 1100,
+        bonuses: { primary: 11000, secondary: 7700, tertiary: 5500 },
+      },
+      `${hotel}, size 41 (tycoon) returns correct data for 41+ bracket [large, tycoon, column-2]`
+    );
+  }
+  // loop through large tycoon hotels
+  const largeTycoonColumn3Hotels = ['Continental', 'Imperial'];
+  for (const hotel of largeTycoonColumn3Hotels) {
+    assertEqual(
+      getHotelChainData('tycoon', hotel, 41),
+      {
+        buySellPrice: 1200,
+        bonuses: { primary: 12000, secondary: 8200, tertiary: 6000 },
+      },
+      `${hotel}, size 41 (tycoon) returns correct data for 41+ bracket [large, tycoon, column-3]`
+    );
+  }
 }
