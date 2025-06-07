@@ -325,6 +325,12 @@ function renderMergeModal(acquireState) {
     acquired = hotel1;
   }
 
+  // Always use chosen if present after tie-breaker
+  if (needChoice && acquireState?.chosen) {
+    acquired = acquireState.chosen;
+    survivor = hotel1 === acquired ? hotel2 : hotel1;
+  }
+
   // Step logic
   const step = acquireState?.step || 'choose';
 
@@ -504,7 +510,11 @@ function renderMergeModal(acquireState) {
   const continueBonusesBtn = document.getElementById('continue-bonuses-modal');
   if (continueBonusesBtn) {
     continueBonusesBtn.onclick = () => {
-      renderMergeModal({ ...acquireState, bonusesShown: true });
+      renderMergeModal({
+        ...acquireState,
+        bonusesShown: true,
+        chosen: acquireState.chosen,
+      });
     };
   }
 }
