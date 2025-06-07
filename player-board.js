@@ -157,10 +157,11 @@ function renderPlayerBoard() {
     </tr>
   `;
 
-  // Mode selector row (as before)
+  // Mode selector row (as before), now with Reset button
   const modeSelector = `
     <div class="flex justify-end mt-8 mb-2">
       <div class="flex items-center gap-4">
+        <button id="reset-btn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded font-semibold hover:bg-red-500 hover:text-white transition-colors">Reset</button>
         <label for="mode-select" class="font-medium">Game mode:</label>
         <select id="mode-select" class="border rounded px-2 py-1">
           ${MODES.map(
@@ -201,6 +202,41 @@ function renderPlayerBoard() {
     saveState(state);
     renderPlayerBoard();
   });
+
+  // Reset button event
+  const resetBtn = document.getElementById('reset-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      // Show confirmation modal
+      const existing = document.getElementById('reset-modal');
+      if (existing) existing.remove();
+      const modal = document.createElement('div');
+      modal.id = 'reset-modal';
+      modal.className =
+        'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40';
+      modal.innerHTML = `
+        <div class="bg-white rounded shadow-lg p-6 max-w-xs w-auto mx-auto relative">
+          <div class="mb-4 text-lg font-semibold">Clear current game state?</div>
+          <div class="flex gap-4 justify-end mt-4">
+            <button id="reset-no" class="px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">No</button>
+            <button id="reset-yes" class="px-4 py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700">Yes</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      document.getElementById('reset-no').onclick = () => modal.remove();
+      document.getElementById('reset-yes').onclick = () => {
+        // Clear all hotel sizes and merge selection
+        state.hotelSizes = Object.fromEntries(
+          HOTEL_NAMES.map((name) => [name, 0])
+        );
+        state.mergeSelection = [];
+        saveState(state);
+        modal.remove();
+        renderPlayerBoard();
+      };
+    });
+  }
 
   // Merge button event
   const mergeBtn = document.getElementById('merge-btn');
