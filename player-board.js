@@ -289,6 +289,9 @@ function renderMergeModal(acquireState) {
     acquired = hotel1;
   }
 
+  // Step logic
+  const step = acquireState?.step || 'choose';
+
   // Modal content
   let modalContent = '';
   if (needChoice && !acquireState?.chosen) {
@@ -310,11 +313,47 @@ function renderMergeModal(acquireState) {
         <button type="submit" class="mt-4 px-4 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700">Continue</button>
       </form>
     `;
-  } else {
+  } else if (!acquireState?.bonusesShown) {
+    // Show stockholder bonus step
     if (needChoice) {
       acquired = acquireState.chosen;
       survivor = hotel1 === acquired ? hotel2 : hotel1;
     }
+    const acquiredSize = state.hotelSizes[acquired];
+    const acquiredData = getHotelChainData(state.mode, acquired, acquiredSize);
+    const bonuses = acquiredData?.bonuses || {};
+    modalContent = `
+      <div class="mb-4 text-lg font-semibold"><span class="${
+        HOTEL_STYLES[survivor]
+      }">${survivor}</span> is acquiring <span class="${
+      HOTEL_STYLES[acquired]
+    }">${acquired}</span></div>
+      <div class="mb-4">It's time to pay stockholder bonuses. <span class="${
+        HOTEL_STYLES[acquired]
+      }">${acquired}</span> will pay:</div>
+      <table class="mb-6 text-base">
+        <tbody>
+          <tr><td class="font-bold pr-4">Primary:</td><td>$${
+            bonuses.primary?.toLocaleString('en-GB') || '-'
+          }</td></tr>
+          <tr><td class="font-bold pr-4">Secondary:</td><td>$${
+            bonuses.secondary?.toLocaleString('en-GB') || '-'
+          }</td></tr>
+          ${
+            state.mode === 'tycoon' && bonuses.tertiary !== undefined
+              ? `<tr><td class="font-bold pr-4">Tertiary:</td><td>$${bonuses.tertiary?.toLocaleString(
+                  'en-GB'
+                )}</td></tr>`
+              : ''
+          }
+        </tbody>
+      </table>
+      <div class="flex gap-4 justify-end mt-4">
+        <button id="abort-merge-modal" class="px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">Abort</button>
+        <button id="continue-bonuses-modal" class="px-4 py-2 bg-teal-600 text-white rounded font-semibold hover:bg-teal-700">Continue</button>
+      </div>
+    `;
+  } else {
     // Get sell price for acquired hotel
     const acquiredSize = state.hotelSizes[acquired];
     const acquiredData = getHotelChainData(state.mode, acquired, acquiredSize);
@@ -422,7 +461,14 @@ function renderMergeModal(acquireState) {
     form.onsubmit = (e) => {
       e.preventDefault();
       const chosen = form.elements['acquired'].value;
-      renderMergeModal({ chosen });
+      renderMergeModal({ chosen, step: 'bonuses' });
+    };
+  }
+  // Bonuses step logic
+  const continueBonusesBtn = document.getElementById('continue-bonuses-modal');
+  if (continueBonusesBtn) {
+    continueBonusesBtn.onclick = () => {
+      renderMergeModal({ ...acquireState, bonusesShown: true });
     };
   }
 }
