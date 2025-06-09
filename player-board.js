@@ -608,14 +608,13 @@ function renderPlayersSection() {
       const value = getShareValue(hotel, shares);
       const bg = p % 2 === 0 ? 'bg-gray-50' : 'bg-white';
       const border = 'border-r-2 border-gray-200';
-      hotelRows += `<td class="py-2 px-2 ${bg}">
-        <input type="number" min="0" max="99" step="1" value="${shares}" data-player="${p}" data-hotel="${hotel}" class="w-14 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none shares-input" aria-label="${
-        players[p].name
-      } shares in ${hotel}" />
-      </td>
-      <td class="py-2 px-2 text-right ${bg} ${border}">$${value.toLocaleString(
+      // Value cell first, then input cell
+      hotelRows += `<td class="py-2 px-2 text-right ${bg} ${border}">$${value.toLocaleString(
         'en-GB'
       )}</td>`;
+      hotelRows += `<td class="py-2 px-2 ${bg}">
+        <input type="number" min="0" max="99" step="1" value="${shares}" data-player="${p}" data-hotel="${hotel}" class="w-14 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none shares-input" aria-label="${players[p].name} shares in ${hotel}" />
+      </td>`;
     }
     hotelRows += '</tr>';
   }
@@ -625,13 +624,12 @@ function renderPlayersSection() {
   for (let p = 0; p < players.length; p++) {
     const bg = p % 2 === 0 ? 'bg-yellow-50' : 'bg-yellow-100';
     const border = 'border-r-2 border-gray-200';
-    // Add empty cell for shares column
-    cashRow += `<td class="${bg}"></td>`;
-    // Add input in value column
+    // Value cell (with $ and input), then empty cell for shares
     cashRow += `<td class="py-2 px-2 ${bg} ${border} flex items-center justify-end gap-1">
       <span class="text-gray-500 font-semibold">$</span>
       <input type="number" min="0" max="999999" value="${players[p].cash}" data-player="${p}" class="w-32 text-right bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none cash-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" aria-label="${players[p].name} cash in hand" />
     </td>`;
+    cashRow += `<td class="${bg}"></td>`;
   }
   cashRow += '</tr>';
 
