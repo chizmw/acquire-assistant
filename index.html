@@ -233,6 +233,7 @@
           new Date().getFullYear();
       });
       function showSection(section) {
+        localStorage.setItem('acquire_section', section);
         document
           .getElementById('player-board-section')
           .classList.toggle('hidden', section !== 'player-board');
@@ -316,8 +317,10 @@
           e.preventDefault();
           showSection('about');
         });
-      // Default to player board
-      showSection('player-board');
+      // Default to player board or last viewed section
+      const lastSection =
+        localStorage.getItem('acquire_section') || 'player-board';
+      showSection(lastSection);
     </script>
   </body>
 </html>

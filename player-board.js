@@ -722,4 +722,11 @@ window.showSection = function (section) {
   }
 };
 
-document.addEventListener('DOMContentLoaded', renderPlayerBoard);
+document.addEventListener('DOMContentLoaded', () => {
+  renderPlayerBoard();
+  // Also render Players section if it's the active one
+  const lastSection = localStorage.getItem('acquire_section') || 'player-board';
+  if (lastSection === 'players') {
+    renderPlayersSection();
+  }
+});
