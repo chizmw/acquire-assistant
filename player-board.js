@@ -609,8 +609,9 @@ function renderPlayersSection() {
       data && data.buySellPrice
         ? `$${data.buySellPrice.toLocaleString('en-GB')} each`
         : '–';
+    const hotelStyle = HOTEL_STYLES[hotel] || '';
     hotelRows += `<tr class="border-b last:border-b-0">\n      <td class="py-2 pr-4 whitespace-nowrap font-semibold align-top">
-        ${hotel}
+        <span class='${hotelStyle}'>${hotel}</span>
         <div class='text-xs text-gray-500 font-normal mt-1'>${perShare}</div>
       </td>`;
     for (let p = 0; p < players.length; p++) {
