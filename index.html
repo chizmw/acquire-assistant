@@ -53,8 +53,10 @@
         >
       </div>
       <div class="flex gap-4">
-        <a href="#" class="hover:underline">Player Board</a>
-        <a href="#" class="hover:underline">Rules</a>
+        <a href="#player-board" id="nav-player-board" class="hover:underline"
+          >Player Board</a
+        >
+        <a href="#rules" id="nav-rules" class="hover:underline">Rules</a>
         <a href="#" class="hover:underline">About</a>
       </div>
     </nav>
@@ -62,12 +64,29 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col items-center justify-start p-6 pt-24">
       <section
-        class="w-full max-w-4xl mx-auto bg-white rounded shadow p-0 mt-6 overflow-x-auto sm:max-w-full"
+        id="player-board-section"
+        class="w-full max-w-4xl mx-auto bg-white rounded shadow p-0 mt-6 sm:max-w-full"
       >
         <div class="p-6 min-w-[350px]">
-          <div id="player-board-root">
-            <!-- Dynamic player board UI will be rendered here -->
+          <div class="overflow-x-auto">
+            <div id="player-board-root">
+              <!-- Dynamic player board UI will be rendered here -->
+            </div>
           </div>
+        </div>
+      </section>
+      <section
+        id="rules-section"
+        class="w-full max-w-4xl mx-auto bg-white rounded shadow p-0 mt-6 sm:max-w-full hidden"
+      >
+        <div class="p-6 min-w-[350px] flex flex-col items-center">
+          <h2 class="text-2xl font-bold mb-4">Acquire Official Rulebook</h2>
+          <iframe
+            src="https://renegadegamestudios.com/content/File%20Storage%20for%20site/Rulebooks/Acquire/Acquire_RGS_Rulebook_WEB.pdf"
+            class="w-full"
+            style="min-height: 70vh"
+            frameborder="0"
+          ></iframe>
         </div>
       </section>
     </main>
@@ -81,6 +100,28 @@
         document.getElementById('footer-year').textContent =
           new Date().getFullYear();
       });
+      function showSection(section) {
+        document
+          .getElementById('player-board-section')
+          .classList.toggle('hidden', section !== 'player-board');
+        document
+          .getElementById('rules-section')
+          .classList.toggle('hidden', section !== 'rules');
+      }
+      document
+        .getElementById('nav-player-board')
+        .addEventListener('click', function (e) {
+          e.preventDefault();
+          showSection('player-board');
+        });
+      document
+        .getElementById('nav-rules')
+        .addEventListener('click', function (e) {
+          e.preventDefault();
+          showSection('rules');
+        });
+      // Default to player board
+      showSection('player-board');
     </script>
   </body>
 </html>
