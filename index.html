@@ -72,6 +72,12 @@
           >Turn Sequence</a
         >
         <a
+          href="#end-of-game"
+          id="nav-end-of-game"
+          class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
+          >End Of Game</a
+        >
+        <a
           href="#rules"
           id="nav-rules"
           class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
@@ -178,6 +184,45 @@
         </div>
       </section>
       <section
+        id="end-of-game-section"
+        class="w-full max-w-2xl mx-auto bg-white rounded shadow p-0 mt-6 sm:max-w-full hidden"
+      >
+        <div class="p-6 flex flex-col items-center">
+          <h2 class="text-2xl font-bold mb-4">End Of Game</h2>
+          <div class="mb-4 text-base text-gray-700 max-w-2xl">
+            <p class="mb-2 font-semibold">THE END OF THE GAME</p>
+            <p class="mb-4">
+              The game ends when one player announces during their turn that
+              either all active hotel chains are safe or that one active hotel
+              chain is made up of 41 or more building tiles. A player does not
+              have to announce that the game is over if it is to their advantage
+              to keep playing—for example, to enlarge a hotel chain they own
+              stock in. After making this announcement, that player finishes
+              their turn as normal, then the game ends.
+            </p>
+            <p class="mb-4">As soon as the game ends, do the following:</p>
+            <ol class="list-decimal list-inside space-y-2 pl-4">
+              <li>
+                Pay out primary, secondary (and tertiary, if playing Tycoon
+                Mode) stockholder bonuses for all active hotel chains according
+                to the stockholder info card, the way you would pay out bonuses
+                after a merger.
+              </li>
+              <li>
+                Players sell all their stocks back to the bank at a price
+                determined by the hotel chain's name and size, as noted on the
+                info card. Stocks in a hotel chain not on the board are worth
+                nothing.
+              </li>
+              <li>
+                Each player adds up their money, and the player with the most
+                money wins! If there is a tie, the victory is shared.
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+      <section
         id="about-section"
         class="w-full max-w-2xl mx-auto bg-white rounded shadow p-0 mt-6 sm:max-w-full hidden"
       >
@@ -247,6 +292,9 @@
           .getElementById('turn-sequence-section')
           .classList.toggle('hidden', section !== 'turn-sequence');
         document
+          .getElementById('end-of-game-section')
+          .classList.toggle('hidden', section !== 'end-of-game');
+        document
           .getElementById('about-section')
           .classList.toggle('hidden', section !== 'about');
         // Active menu item highlighting
@@ -254,6 +302,7 @@
           'nav-player-board',
           'nav-players',
           'nav-turn-sequence',
+          'nav-end-of-game',
           'nav-rules',
           'nav-about',
         ];
@@ -273,6 +322,7 @@
         else if (section === 'players') activeId = 'nav-players';
         else if (section === 'turn-sequence') activeId = 'nav-turn-sequence';
         else if (section === 'rules') activeId = 'nav-rules';
+        else if (section === 'end-of-game') activeId = 'nav-end-of-game';
         else if (section === 'about') activeId = 'nav-about';
         if (activeId) {
           const activeEl = document.getElementById(activeId);
@@ -304,6 +354,12 @@
         .addEventListener('click', function (e) {
           e.preventDefault();
           showSection('turn-sequence');
+        });
+      document
+        .getElementById('nav-end-of-game')
+        .addEventListener('click', function (e) {
+          e.preventDefault();
+          showSection('end-of-game');
         });
       document
         .getElementById('nav-rules')
