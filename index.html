@@ -60,6 +60,12 @@
           >Player Board</a
         >
         <a
+          href="#players"
+          id="nav-players"
+          class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
+          >Players</a
+        >
+        <a
           href="#turn-sequence"
           id="nav-turn-sequence"
           class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
@@ -90,6 +96,18 @@
           <div class="overflow-x-auto">
             <div id="player-board-root">
               <!-- Dynamic player board UI will be rendered here -->
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        id="players-section"
+        class="w-full max-w-4xl mx-auto bg-white rounded shadow p-0 mt-6 sm:max-w-full hidden"
+      >
+        <div class="p-6 min-w-[350px]">
+          <div class="overflow-x-auto">
+            <div id="players-root">
+              <!-- Dynamic players table UI will be rendered here -->
             </div>
           </div>
         </div>
@@ -219,6 +237,9 @@
           .getElementById('player-board-section')
           .classList.toggle('hidden', section !== 'player-board');
         document
+          .getElementById('players-section')
+          .classList.toggle('hidden', section !== 'players');
+        document
           .getElementById('rules-section')
           .classList.toggle('hidden', section !== 'rules');
         document
@@ -230,6 +251,7 @@
         // Active menu item highlighting
         const navIds = [
           'nav-player-board',
+          'nav-players',
           'nav-turn-sequence',
           'nav-rules',
           'nav-about',
@@ -247,6 +269,7 @@
         });
         let activeId = null;
         if (section === 'player-board') activeId = 'nav-player-board';
+        else if (section === 'players') activeId = 'nav-players';
         else if (section === 'turn-sequence') activeId = 'nav-turn-sequence';
         else if (section === 'rules') activeId = 'nav-rules';
         else if (section === 'about') activeId = 'nav-about';
@@ -268,6 +291,12 @@
         .addEventListener('click', function (e) {
           e.preventDefault();
           showSection('player-board');
+        });
+      document
+        .getElementById('nav-players')
+        .addEventListener('click', function (e) {
+          e.preventDefault();
+          showSection('players');
         });
       document
         .getElementById('nav-turn-sequence')
