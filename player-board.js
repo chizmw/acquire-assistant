@@ -678,7 +678,7 @@ function renderPlayersSection() {
 
   // Event listeners for shares
   root.querySelectorAll('.shares-input').forEach((input) => {
-    input.addEventListener('change', (e) => {
+    function updateShares(e) {
       const p = parseInt(e.target.getAttribute('data-player'), 10);
       const hotel = e.target.getAttribute('data-hotel');
       let value = parseInt(e.target.value, 10);
@@ -687,14 +687,16 @@ function renderPlayersSection() {
       players[p].shares[hotel] = value;
       savePlayersState(players);
       renderPlayersSection();
-    });
+    }
+    input.addEventListener('input', updateShares);
+    input.addEventListener('change', updateShares);
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') e.target.blur();
     });
   });
   // Event listeners for cash
   root.querySelectorAll('.cash-input').forEach((input) => {
-    input.addEventListener('change', (e) => {
+    function updateCash(e) {
       const p = parseInt(e.target.getAttribute('data-player'), 10);
       let value = parseInt(e.target.value, 10);
       if (isNaN(value) || value < 0) value = 0;
@@ -702,7 +704,9 @@ function renderPlayersSection() {
       players[p].cash = value;
       savePlayersState(players);
       renderPlayersSection();
-    });
+    }
+    input.addEventListener('input', updateCash);
+    input.addEventListener('change', updateCash);
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') e.target.blur();
     });
