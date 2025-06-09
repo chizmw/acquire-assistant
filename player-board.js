@@ -27,6 +27,10 @@ const MODES = [
   { value: 'classic', label: 'Classic Mode' },
 ];
 
+const DEFAULT_PLAYER_COUNT = 6;
+const PLAYER_MIN = 1;
+const PLAYER_MAX = 6;
+
 function loadState() {
   let mode = 'tycoon';
   let hotelSizes = Object.fromEntries(HOTEL_NAMES.map((name) => [name, 0]));
@@ -53,6 +57,32 @@ function saveState(state) {
       'acquire_mergeSelection',
       JSON.stringify(state.mergeSelection)
     );
+  } catch (e) {}
+}
+
+function loadPlayersState() {
+  let players = [];
+  try {
+    const stored = localStorage.getItem('acquire_players');
+    if (stored) players = JSON.parse(stored);
+  } catch (e) {}
+  if (
+    !Array.isArray(players) ||
+    players.length < PLAYER_MIN ||
+    players.length > PLAYER_MAX
+  ) {
+    players = Array.from({ length: DEFAULT_PLAYER_COUNT }, (_, i) => ({
+      name: `Player ${i + 1}`,
+      cash: 0,
+      shares: Object.fromEntries(HOTEL_NAMES.map((h) => [h, 0])),
+    }));
+  }
+  return players;
+}
+
+function savePlayersState(players) {
+  try {
+    localStorage.setItem('acquire_players', JSON.stringify(players));
   } catch (e) {}
 }
 
@@ -346,7 +376,8 @@ function renderMergeModal(acquireState) {
       <div class="mb-4 text-lg font-semibold">Both hotel chains are the same size. The active player must choose which hotel chain is being <u>acquired</u>:</div>
       <form id="choose-acquired-form" class="flex flex-col gap-2 mb-4">
         <label class="flex items-center gap-2">
-          <input type="radio" name="acquired" value="${hotel1}" required />
+          <inpt diff
+          ut type="radio" name="acquired" value="${hotel1}" required />
           <span class="${HOTEL_STYLES[hotel1]}">${hotel1}</span>
           will cease to exist - long live
           <span class="${HOTEL_STYLES[hotel2]}">${hotel2}</span>
@@ -524,4 +555,267 @@ function renderMergeModal(acquireState) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', renderPlayerBoard);
+function renderPlayersSection() {
+  const root = document.getElementById('players-root');
+  if (!root) return;
+  let players = loadPlayersState();
+
+  // Allow changing player count
+  function setPlayerCount(count) {
+    count = Math.max(PLAYER_MIN, Math.min(PLAYER_MAX, count));
+    if (players.length < count) {
+      for (let i = players.length; i < count; i++) {
+        players.push({
+          name: `Player ${i + 1}`,
+          cash: 0,
+          shares: Object.fromEntries(HOTEL_NAMES.map((h) => [h, 0])),
+        });
+      }
+    } else if (players.length > count) {
+      players = players.slice(0, count);
+    }
+    savePlayersState(players);
+    renderPlayersSection();
+  }
+
+  // Calculate share values and totals
+  function getShareValue(hotel, shares) {
+    const size = state.hotelSizes[hotel] || 0;
+    const data = getHotelChainData(state.mode, hotel, size);
+    return data && data.buySellPrice ? shares * data.buySellPrice : 0;
+  }
+  function getPlayerTotal(player) {
+    let total = player.cash;
+    for (const hotel of HOTEL_NAMES) {
+      total += getShareValue(hotel, player.shares[hotel]);
+    }
+    return total;
+  }
+
+  // Table header
+  let headerCols = '<th class="py-2 pr-4 w-32">&nbsp;</th>';
+  for (let i = 0; i < players.length; i++) {
+    const bg = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+    // Editable player name header
+    headerCols += `<th colspan="2" class="py-2 px-2 text-center font-bold ${bg} border-r-2 border-gray-200">
+      <span class="player-name" data-player="${i}" tabindex="0">${players[i].name}</span>
+    </th>`;
+  }
+
+  // Hotel rows
+  let hotelRows = '';
+  for (const hotel of HOTEL_NAMES) {
+    // Get current value per share
+    const size = state.hotelSizes[hotel] || 0;
+    const data = getHotelChainData(state.mode, hotel, size);
+    const perShare =
+      data && data.buySellPrice
+        ? `$${data.buySellPrice.toLocaleString('en-GB')} each`
+        : '–';
+    const hotelStyle = HOTEL_STYLES[hotel] || '';
+    hotelRows += `<tr class="border-b last:border-b-0">\n      <td class="py-2 pr-4 whitespace-nowrap font-semibold align-top">
+        <span class='${hotelStyle}'>${hotel}</span>
+        <div class='text-xs text-gray-500 font-normal mt-1'>${perShare}</div>
+      </td>`;
+    for (let p = 0; p < players.length; p++) {
+      const shares = players[p].shares[hotel] || 0;
+      const value = getShareValue(hotel, shares);
+      const bg = p % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+      const border = 'border-r-2 border-gray-200';
+      // Value cell first, then input cell
+      hotelRows += `<td class="py-2 px-2 text-right ${bg} ${border}">$${value.toLocaleString(
+        'en-GB'
+      )}</td>`;
+      hotelRows += `<td class="py-2 px-2 ${bg}">
+        <input type="number" min="0" max="99" step="1" value="${shares}" data-player="${p}" data-hotel="${hotel}" class="w-14 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none shares-input" aria-label="${players[p].name} shares in ${hotel}" />
+      </td>`;
+    }
+    hotelRows += '</tr>';
+  }
+
+  // Cash in hand row
+  let cashRow = `<tr class="border-b bg-yellow-50 font-semibold">\n    <td class="py-2 pr-4">Cash in Hand</td>`;
+  for (let p = 0; p < players.length; p++) {
+    const bg = p % 2 === 0 ? 'bg-yellow-50' : 'bg-yellow-100';
+    const border = 'border-r-2 border-gray-200';
+    // Value cell (with $ and input), then empty cell for shares
+    cashRow += `<td class="py-2 px-2 ${bg} ${border} flex items-center justify-end gap-1">
+      <span class="text-gray-500 font-semibold">$</span>
+      <input type="number" min="0" max="999999" value="${players[p].cash}" data-player="${p}" class="w-32 text-right bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none cash-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" aria-label="${players[p].name} cash in hand" />
+    </td>`;
+    cashRow += `<td class="${bg}"></td>`;
+  }
+  cashRow += '</tr>';
+
+  // Total row
+  let totalRow = `<tr class="bg-green-50 font-bold">\n    <td class="py-2 pr-4">Total Worth</td>`;
+  for (let p = 0; p < players.length; p++) {
+    const bg = p % 2 === 0 ? 'bg-green-50' : 'bg-green-100';
+    const border = 'border-r-2 border-gray-200';
+    totalRow += `<td colspan="2" class="py-2 px-2 text-right ${bg} ${border}">$${getPlayerTotal(
+      players[p]
+    ).toLocaleString('en-GB')}</td>`;
+  }
+  totalRow += '</tr>';
+
+  // Player count selector
+  let playerCountSelector = `<div class="mb-4 flex items-center gap-2">
+    <label for="player-count" class="font-medium">Number of Players:</label>
+    <select id="player-count" class="border rounded px-2 py-1">
+      ${Array.from(
+        { length: PLAYER_MAX },
+        (_, i) =>
+          `<option value="${i + 1}"${
+            players.length === i + 1 ? ' selected' : ''
+          }>${i + 1}</option>`
+      ).join('')}
+    </select>
+  </div>`;
+
+  root.innerHTML = `
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold mb-2">Players</h2>
+      <p class="text-gray-700 mb-2">Track shares, cash, and total worth for each player. All values update in real time.</p>
+      ${playerCountSelector}
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left bg-white rounded shadow">
+        <thead>
+          <tr>${headerCols}</tr>
+        </thead>
+        <tbody>
+          ${hotelRows}
+          ${cashRow}
+          ${totalRow}
+        </tbody>
+      </table>
+    </div>
+    <div class="flex justify-end mt-4">
+      <button id="reset-player-scoring-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded font-semibold hover:bg-red-500 hover:text-white transition-colors">Reset player scoring</button>
+    </div>
+  `;
+
+  // Event listeners for shares
+  root.querySelectorAll('.shares-input').forEach((input) => {
+    function updateShares(e) {
+      const p = parseInt(e.target.getAttribute('data-player'), 10);
+      const hotel = e.target.getAttribute('data-hotel');
+      let value = parseInt(e.target.value, 10);
+      if (isNaN(value) || value < 0) value = 0;
+      if (value > 99) value = 99;
+      players[p].shares[hotel] = value;
+      savePlayersState(players);
+      renderPlayersSection();
+    }
+    input.addEventListener('input', updateShares);
+    input.addEventListener('change', updateShares);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.target.blur();
+    });
+  });
+  // Event listeners for cash
+  root.querySelectorAll('.cash-input').forEach((input) => {
+    function updateCash(e) {
+      const p = parseInt(e.target.getAttribute('data-player'), 10);
+      let value = parseInt(e.target.value, 10);
+      if (isNaN(value) || value < 0) value = 0;
+      if (value > 999999) value = 999999;
+      players[p].cash = value;
+      savePlayersState(players);
+      renderPlayersSection();
+    }
+    input.addEventListener('change', updateCash);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.target.blur();
+    });
+  });
+  // Player count selector
+  root.querySelector('#player-count').addEventListener('change', (e) => {
+    setPlayerCount(parseInt(e.target.value, 10));
+  });
+
+  // After rendering, add event listeners for editing player names
+  root.querySelectorAll('.player-name').forEach((el) => {
+    el.addEventListener('click', function (e) {
+      const p = parseInt(this.getAttribute('data-player'), 10);
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = players[p].name;
+      input.className =
+        'w-24 text-center font-bold border border-gray-300 rounded px-1 py-0.5 focus:border-blue-400 focus:outline-none';
+      input.setAttribute('data-player', p);
+      input.setAttribute('maxlength', 20);
+      this.replaceWith(input);
+      input.focus();
+      input.select();
+      function save() {
+        const newName = input.value.trim() || `Player ${p + 1}`;
+        players[p].name = newName;
+        savePlayersState(players);
+        renderPlayersSection();
+      }
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          input.blur();
+        } else if (e.key === 'Escape') {
+          renderPlayersSection();
+        }
+      });
+    });
+  });
+
+  // Reset player scoring button logic
+  const resetBtn = root.querySelector('#reset-player-scoring-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      // Remove any existing modal
+      const existing = document.getElementById('reset-player-modal');
+      if (existing) existing.remove();
+      const modal = document.createElement('div');
+      modal.id = 'reset-player-modal';
+      modal.className =
+        'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40';
+      modal.innerHTML = `
+        <div class="bg-white rounded shadow-lg p-6 max-w-xs w-auto mx-auto relative">
+          <div class="mb-4 text-lg font-semibold">Reset all player scores and names?</div>
+          <div class="flex gap-4 justify-end mt-4">
+            <button id="reset-player-no" class="px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">No</button>
+            <button id="reset-player-yes" class="px-4 py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700">Yes</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      document.getElementById('reset-player-no').onclick = () => modal.remove();
+      document.getElementById('reset-player-yes').onclick = () => {
+        // Reset all player data to default
+        players = Array.from({ length: players.length }, (_, i) => ({
+          name: `Player ${i + 1}`,
+          cash: 0,
+          shares: Object.fromEntries(HOTEL_NAMES.map((h) => [h, 0])),
+        }));
+        savePlayersState(players);
+        modal.remove();
+        renderPlayersSection();
+      };
+    });
+  }
+}
+
+// Patch navigation to render Players section when shown
+const origShowSection = window.showSection;
+window.showSection = function (section) {
+  origShowSection(section);
+  if (section === 'players') {
+    renderPlayersSection();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderPlayerBoard();
+  // Also render Players section if it's the active one
+  const lastSection = localStorage.getItem('acquire_section') || 'player-board';
+  if (lastSection === 'players') {
+    renderPlayersSection();
+  }
+});
