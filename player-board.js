@@ -690,6 +690,9 @@ function renderPlayersSection() {
         </tbody>
       </table>
     </div>
+    <div class="flex justify-end mt-4">
+      <button id="reset-player-scoring-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded font-semibold hover:bg-red-500 hover:text-white transition-colors">Reset player scoring</button>
+    </div>
   `;
 
   // Event listeners for shares
@@ -761,6 +764,42 @@ function renderPlayersSection() {
       });
     });
   });
+
+  // Reset player scoring button logic
+  const resetBtn = root.querySelector('#reset-player-scoring-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      // Remove any existing modal
+      const existing = document.getElementById('reset-player-modal');
+      if (existing) existing.remove();
+      const modal = document.createElement('div');
+      modal.id = 'reset-player-modal';
+      modal.className =
+        'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40';
+      modal.innerHTML = `
+        <div class="bg-white rounded shadow-lg p-6 max-w-xs w-auto mx-auto relative">
+          <div class="mb-4 text-lg font-semibold">Reset all player scores and names?</div>
+          <div class="flex gap-4 justify-end mt-4">
+            <button id="reset-player-no" class="px-4 py-2 bg-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-400">No</button>
+            <button id="reset-player-yes" class="px-4 py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700">Yes</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      document.getElementById('reset-player-no').onclick = () => modal.remove();
+      document.getElementById('reset-player-yes').onclick = () => {
+        // Reset all player data to default
+        players = Array.from({ length: players.length }, (_, i) => ({
+          name: `Player ${i + 1}`,
+          cash: 0,
+          shares: Object.fromEntries(HOTEL_NAMES.map((h) => [h, 0])),
+        }));
+        savePlayersState(players);
+        modal.remove();
+        renderPlayersSection();
+      };
+    });
+  }
 }
 
 // Patch navigation to render Players section when shown
