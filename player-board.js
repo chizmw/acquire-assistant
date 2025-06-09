@@ -595,42 +595,48 @@ function renderPlayersSection() {
   // Table header
   let headerCols = '<th class="py-2 pr-4 w-32">&nbsp;</th>';
   for (let i = 0; i < players.length; i++) {
-    headerCols += `<th colspan="2" class="py-2 px-2 text-center">${players[i].name}</th>`;
+    const bg = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+    headerCols += `<th colspan="2" class="py-2 px-2 text-center font-bold ${bg} border-r-2 border-gray-200">${players[i].name}</th>`;
   }
 
   // Hotel rows
   let hotelRows = '';
   for (const hotel of HOTEL_NAMES) {
-    hotelRows += `<tr class="border-b last:border-b-0">
-      <td class="py-2 pr-4 whitespace-nowrap font-semibold">${hotel}</td>`;
+    hotelRows += `<tr class="border-b last:border-b-0">\n      <td class="py-2 pr-4 whitespace-nowrap font-semibold">${hotel}</td>`;
     for (let p = 0; p < players.length; p++) {
       const shares = players[p].shares[hotel] || 0;
       const value = getShareValue(hotel, shares);
-      hotelRows += `<td class="py-2 px-2">
+      const bg = p % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+      const border = 'border-r-2 border-gray-200';
+      hotelRows += `<td class="py-2 px-2 ${bg}">
         <input type="number" min="0" max="99" step="1" value="${shares}" data-player="${p}" data-hotel="${hotel}" class="w-14 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none shares-input" aria-label="${
         players[p].name
       } shares in ${hotel}" />
       </td>
-      <td class="py-2 px-2 text-right">£${value.toLocaleString('en-GB')}</td>`;
+      <td class="py-2 px-2 text-right ${bg} ${border}">£${value.toLocaleString(
+        'en-GB'
+      )}</td>`;
     }
     hotelRows += '</tr>';
   }
 
   // Cash in hand row
-  let cashRow = `<tr class="border-b bg-yellow-50 font-semibold">
-    <td class="py-2 pr-4">Cash in Hand</td>`;
+  let cashRow = `<tr class="border-b bg-yellow-50 font-semibold">\n    <td class="py-2 pr-4">Cash in Hand</td>`;
   for (let p = 0; p < players.length; p++) {
-    cashRow += `<td colspan="2" class="py-2 px-2">
+    const bg = p % 2 === 0 ? 'bg-yellow-50' : 'bg-yellow-100';
+    const border = 'border-r-2 border-gray-200';
+    cashRow += `<td colspan="2" class="py-2 px-2 ${bg} ${border}">
       <input type="number" min="0" max="999999" step="1" value="${players[p].cash}" data-player="${p}" class="w-24 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none cash-input" aria-label="${players[p].name} cash in hand" />
     </td>`;
   }
   cashRow += '</tr>';
 
   // Total row
-  let totalRow = `<tr class="bg-green-50 font-bold">
-    <td class="py-2 pr-4">Total Worth</td>`;
+  let totalRow = `<tr class="bg-green-50 font-bold">\n    <td class="py-2 pr-4">Total Worth</td>`;
   for (let p = 0; p < players.length; p++) {
-    totalRow += `<td colspan="2" class="py-2 px-2 text-right">£${getPlayerTotal(
+    const bg = p % 2 === 0 ? 'bg-green-50' : 'bg-green-100';
+    const border = 'border-r-2 border-gray-200';
+    totalRow += `<td colspan="2" class="py-2 px-2 text-right ${bg} ${border}">£${getPlayerTotal(
       players[p]
     ).toLocaleString('en-GB')}</td>`;
   }
