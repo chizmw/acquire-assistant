@@ -602,7 +602,17 @@ function renderPlayersSection() {
   // Hotel rows
   let hotelRows = '';
   for (const hotel of HOTEL_NAMES) {
-    hotelRows += `<tr class="border-b last:border-b-0">\n      <td class="py-2 pr-4 whitespace-nowrap font-semibold">${hotel}</td>`;
+    // Get current value per share
+    const size = state.hotelSizes[hotel] || 0;
+    const data = getHotelChainData(state.mode, hotel, size);
+    const perShare =
+      data && data.buySellPrice
+        ? `$${data.buySellPrice.toLocaleString('en-GB')} each`
+        : '–';
+    hotelRows += `<tr class="border-b last:border-b-0">\n      <td class="py-2 pr-4 whitespace-nowrap font-semibold align-top">
+        ${hotel}
+        <div class='text-xs text-gray-500 font-normal mt-1'>${perShare}</div>
+      </td>`;
     for (let p = 0; p < players.length; p++) {
       const shares = players[p].shares[hotel] || 0;
       const value = getShareValue(hotel, shares);
