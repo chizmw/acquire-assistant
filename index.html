@@ -159,6 +159,44 @@
           </div>
         </div>
       </section>
+      <section
+        id="about-section"
+        class="w-full max-w-2xl mx-auto bg-white rounded shadow p-0 mt-6 sm:max-w-full hidden"
+      >
+        <div class="p-6 flex flex-col items-center">
+          <h2 class="text-2xl font-bold mb-4">About Acquire Assistant</h2>
+          <p class="mb-4 text-base text-gray-700 text-center max-w-xl">
+            Acquire Assistant is a modern, web-based companion for the classic
+            board game <span class="font-semibold">Acquire</span>. It helps you
+            track hotel chains, manage player boards, and reference the official
+            rules and turn sequence. Built with a focus on clarity,
+            accessibility, and ease of use, this tool is designed for both new
+            and experienced players.
+          </p>
+          <div class="mb-6 text-base text-gray-700 text-center max-w-xl">
+            <p>
+              This project is open source and maintained by
+              <span class="font-semibold">Chisel</span>. If you find it helpful
+              and would like to support further development, you can buy me a
+              coffee:
+            </p>
+          </div>
+          <div class="kofi-container flex justify-center">
+            <a
+              href="https://ko-fi.com/chizmw"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-block"
+            >
+              <img
+                src="https://storage.ko-fi.com/cdn/kofi3.png?v=3"
+                alt="Support Me on Ko-fi"
+                class="h-10"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="text-center text-xs text-gray-500 py-4">
@@ -180,6 +218,9 @@
         document
           .getElementById('turn-sequence-section')
           .classList.toggle('hidden', section !== 'turn-sequence');
+        document
+          .getElementById('about-section')
+          .classList.toggle('hidden', section !== 'about');
         // Active menu item highlighting
         const navIds = [
           'nav-player-board',
