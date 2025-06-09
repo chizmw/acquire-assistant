@@ -596,7 +596,10 @@ function renderPlayersSection() {
   let headerCols = '<th class="py-2 pr-4 w-32">&nbsp;</th>';
   for (let i = 0; i < players.length; i++) {
     const bg = i % 2 === 0 ? 'bg-gray-50' : 'bg-white';
-    headerCols += `<th colspan="2" class="py-2 px-2 text-center font-bold ${bg} border-r-2 border-gray-200">${players[i].name}</th>`;
+    // Editable player name header
+    headerCols += `<th colspan="2" class="py-2 px-2 text-center font-bold ${bg} border-r-2 border-gray-200">
+      <span class="player-name" data-player="${i}" tabindex="0">${players[i].name}</span>
+    </th>`;
   }
 
   // Hotel rows
@@ -726,6 +729,37 @@ function renderPlayersSection() {
   // Player count selector
   root.querySelector('#player-count').addEventListener('change', (e) => {
     setPlayerCount(parseInt(e.target.value, 10));
+  });
+
+  // After rendering, add event listeners for editing player names
+  root.querySelectorAll('.player-name').forEach((el) => {
+    el.addEventListener('click', function (e) {
+      const p = parseInt(this.getAttribute('data-player'), 10);
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = players[p].name;
+      input.className =
+        'w-24 text-center font-bold border border-gray-300 rounded px-1 py-0.5 focus:border-blue-400 focus:outline-none';
+      input.setAttribute('data-player', p);
+      input.setAttribute('maxlength', 20);
+      this.replaceWith(input);
+      input.focus();
+      input.select();
+      function save() {
+        const newName = input.value.trim() || `Player ${p + 1}`;
+        players[p].name = newName;
+        savePlayersState(players);
+        renderPlayersSection();
+      }
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          input.blur();
+        } else if (e.key === 'Escape') {
+          renderPlayersSection();
+        }
+      });
+    });
   });
 }
 
