@@ -53,14 +53,30 @@
         >
       </div>
       <div class="flex gap-4">
-        <a href="#player-board" id="nav-player-board" class="hover:underline"
+        <a
+          href="#player-board"
+          id="nav-player-board"
+          class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
           >Player Board</a
         >
-        <a href="#turn-sequence" id="nav-turn-sequence" class="hover:underline"
+        <a
+          href="#turn-sequence"
+          id="nav-turn-sequence"
+          class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
           >Turn Sequence</a
         >
-        <a href="#rules" id="nav-rules" class="hover:underline">Rules</a>
-        <a href="#" class="hover:underline">About</a>
+        <a
+          href="#rules"
+          id="nav-rules"
+          class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
+          >Rules</a
+        >
+        <a
+          href="#"
+          id="nav-about"
+          class="px-4 py-2 rounded-full text-white font-medium transition-colors duration-200 hover:bg-white hover:text-red-500 focus:bg-white focus:text-red-500"
+          >About</a
+        >
       </div>
     </nav>
 
@@ -164,6 +180,41 @@
         document
           .getElementById('turn-sequence-section')
           .classList.toggle('hidden', section !== 'turn-sequence');
+        // Active menu item highlighting
+        const navIds = [
+          'nav-player-board',
+          'nav-turn-sequence',
+          'nav-rules',
+          'nav-about',
+        ];
+        navIds.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.classList.remove(
+            'bg-white',
+            'text-red-500',
+            'font-bold',
+            'shadow'
+          );
+          el.classList.add('text-white');
+        });
+        let activeId = null;
+        if (section === 'player-board') activeId = 'nav-player-board';
+        else if (section === 'turn-sequence') activeId = 'nav-turn-sequence';
+        else if (section === 'rules') activeId = 'nav-rules';
+        else if (section === 'about') activeId = 'nav-about';
+        if (activeId) {
+          const activeEl = document.getElementById(activeId);
+          if (activeEl) {
+            activeEl.classList.add(
+              'bg-white',
+              'text-red-500',
+              'font-bold',
+              'shadow'
+            );
+            activeEl.classList.remove('text-white');
+          }
+        }
       }
       document
         .getElementById('nav-player-board')
@@ -182,6 +233,12 @@
         .addEventListener('click', function (e) {
           e.preventDefault();
           showSection('rules');
+        });
+      document
+        .getElementById('nav-about')
+        .addEventListener('click', function (e) {
+          e.preventDefault();
+          showSection('about');
         });
       // Default to player board
       showSection('player-board');
