@@ -27,6 +27,10 @@ const MODES = [
   { value: 'classic', label: 'Classic Mode' },
 ];
 
+const DEFAULT_PLAYER_COUNT = 6;
+const PLAYER_MIN = 1;
+const PLAYER_MAX = 6;
+
 function loadState() {
   let mode = 'tycoon';
   let hotelSizes = Object.fromEntries(HOTEL_NAMES.map((name) => [name, 0]));
@@ -53,6 +57,32 @@ function saveState(state) {
       'acquire_mergeSelection',
       JSON.stringify(state.mergeSelection)
     );
+  } catch (e) {}
+}
+
+function loadPlayersState() {
+  let players = [];
+  try {
+    const stored = localStorage.getItem('acquire_players');
+    if (stored) players = JSON.parse(stored);
+  } catch (e) {}
+  if (
+    !Array.isArray(players) ||
+    players.length < PLAYER_MIN ||
+    players.length > PLAYER_MAX
+  ) {
+    players = Array.from({ length: DEFAULT_PLAYER_COUNT }, (_, i) => ({
+      name: `Player ${i + 1}`,
+      cash: 0,
+      shares: Object.fromEntries(HOTEL_NAMES.map((h) => [h, 0])),
+    }));
+  }
+  return players;
+}
+
+function savePlayersState(players) {
+  try {
+    localStorage.setItem('acquire_players', JSON.stringify(players));
   } catch (e) {}
 }
 
@@ -528,10 +558,153 @@ function renderMergeModal(acquireState) {
 function renderPlayersSection() {
   const root = document.getElementById('players-root');
   if (!root) return;
+  let players = loadPlayersState();
+
+  // Allow changing player count
+  function setPlayerCount(count) {
+    count = Math.max(PLAYER_MIN, Math.min(PLAYER_MAX, count));
+    if (players.length < count) {
+      for (let i = players.length; i < count; i++) {
+        players.push({
+          name: `Player ${i + 1}`,
+          cash: 0,
+          shares: Object.fromEntries(HOTEL_NAMES.map((h) => [h, 0])),
+        });
+      }
+    } else if (players.length > count) {
+      players = players.slice(0, count);
+    }
+    savePlayersState(players);
+    renderPlayersSection();
+  }
+
+  // Calculate share values and totals
+  function getShareValue(hotel, shares) {
+    const size = state.hotelSizes[hotel] || 0;
+    const data = getHotelChainData(state.mode, hotel, size);
+    return data && data.buySellPrice ? shares * data.buySellPrice : 0;
+  }
+  function getPlayerTotal(player) {
+    let total = player.cash;
+    for (const hotel of HOTEL_NAMES) {
+      total += getShareValue(hotel, player.shares[hotel]);
+    }
+    return total;
+  }
+
+  // Table header
+  let headerCols = '<th class="py-2 pr-4 w-32">&nbsp;</th>';
+  for (let i = 0; i < players.length; i++) {
+    headerCols += `<th colspan="2" class="py-2 px-2 text-center">${players[i].name}</th>`;
+  }
+
+  // Hotel rows
+  let hotelRows = '';
+  for (const hotel of HOTEL_NAMES) {
+    hotelRows += `<tr class="border-b last:border-b-0">
+      <td class="py-2 pr-4 whitespace-nowrap font-semibold">${hotel}</td>`;
+    for (let p = 0; p < players.length; p++) {
+      const shares = players[p].shares[hotel] || 0;
+      const value = getShareValue(hotel, shares);
+      hotelRows += `<td class="py-2 px-2">
+        <input type="number" min="0" max="99" step="1" value="${shares}" data-player="${p}" data-hotel="${hotel}" class="w-14 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none shares-input" aria-label="${
+        players[p].name
+      } shares in ${hotel}" />
+      </td>
+      <td class="py-2 px-2 text-right">£${value.toLocaleString('en-GB')}</td>`;
+    }
+    hotelRows += '</tr>';
+  }
+
+  // Cash in hand row
+  let cashRow = `<tr class="border-b bg-yellow-50 font-semibold">
+    <td class="py-2 pr-4">Cash in Hand</td>`;
+  for (let p = 0; p < players.length; p++) {
+    cashRow += `<td colspan="2" class="py-2 px-2">
+      <input type="number" min="0" max="999999" step="1" value="${players[p].cash}" data-player="${p}" class="w-24 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none cash-input" aria-label="${players[p].name} cash in hand" />
+    </td>`;
+  }
+  cashRow += '</tr>';
+
+  // Total row
+  let totalRow = `<tr class="bg-green-50 font-bold">
+    <td class="py-2 pr-4">Total Worth</td>`;
+  for (let p = 0; p < players.length; p++) {
+    totalRow += `<td colspan="2" class="py-2 px-2 text-right">£${getPlayerTotal(
+      players[p]
+    ).toLocaleString('en-GB')}</td>`;
+  }
+  totalRow += '</tr>';
+
+  // Player count selector
+  let playerCountSelector = `<div class="mb-4 flex items-center gap-2">
+    <label for="player-count" class="font-medium">Number of Players:</label>
+    <select id="player-count" class="border rounded px-2 py-1">
+      ${Array.from(
+        { length: PLAYER_MAX },
+        (_, i) =>
+          `<option value="${i + 1}"${
+            players.length === i + 1 ? ' selected' : ''
+          }>${i + 1}</option>`
+      ).join('')}
+    </select>
+  </div>`;
+
   root.innerHTML = `
-    <div class="text-center text-xl font-bold mb-4">Players Section (Scores Table Coming Soon)</div>
-    <div class="text-gray-500">This section will allow you to track and calculate player scores.</div>
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold mb-2">Players</h2>
+      <p class="text-gray-700 mb-2">Track shares, cash, and total worth for each player. All values update in real time.</p>
+      ${playerCountSelector}
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left bg-white rounded shadow">
+        <thead>
+          <tr>${headerCols}</tr>
+        </thead>
+        <tbody>
+          ${hotelRows}
+          ${cashRow}
+          ${totalRow}
+        </tbody>
+      </table>
+    </div>
   `;
+
+  // Event listeners for shares
+  root.querySelectorAll('.shares-input').forEach((input) => {
+    input.addEventListener('change', (e) => {
+      const p = parseInt(e.target.getAttribute('data-player'), 10);
+      const hotel = e.target.getAttribute('data-hotel');
+      let value = parseInt(e.target.value, 10);
+      if (isNaN(value) || value < 0) value = 0;
+      if (value > 99) value = 99;
+      players[p].shares[hotel] = value;
+      savePlayersState(players);
+      renderPlayersSection();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.target.blur();
+    });
+  });
+  // Event listeners for cash
+  root.querySelectorAll('.cash-input').forEach((input) => {
+    input.addEventListener('change', (e) => {
+      const p = parseInt(e.target.getAttribute('data-player'), 10);
+      let value = parseInt(e.target.value, 10);
+      if (isNaN(value) || value < 0) value = 0;
+      if (value > 999999) value = 999999;
+      players[p].cash = value;
+      savePlayersState(players);
+      renderPlayersSection();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.target.blur();
+    });
+  });
+  // Player count selector
+  root.querySelector('#player-count').addEventListener('change', (e) => {
+    setPlayerCount(parseInt(e.target.value, 10));
+  });
 }
 
 // Patch navigation to render Players section when shown
