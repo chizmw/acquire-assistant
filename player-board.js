@@ -626,7 +626,7 @@ function renderPlayersSection() {
     const bg = p % 2 === 0 ? 'bg-yellow-50' : 'bg-yellow-100';
     const border = 'border-r-2 border-gray-200';
     cashRow += `<td colspan="2" class="py-2 px-2 ${bg} ${border}">
-      <input type="number" min="0" max="999999" step="1" value="${players[p].cash}" data-player="${p}" class="w-24 text-center bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none cash-input" aria-label="${players[p].name} cash in hand" />
+      <input type="number" min="0" max="999999" value="${players[p].cash}" data-player="${p}" class="w-36 text-right bg-gray-100 rounded px-2 py-1 border border-gray-200 focus:border-blue-400 focus:outline-none cash-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" aria-label="${players[p].name} cash in hand" />
     </td>`;
   }
   cashRow += '</tr>';
@@ -705,7 +705,6 @@ function renderPlayersSection() {
       savePlayersState(players);
       renderPlayersSection();
     }
-    input.addEventListener('input', updateCash);
     input.addEventListener('change', updateCash);
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') e.target.blur();
