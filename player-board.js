@@ -331,6 +331,11 @@ function renderMergeModal(acquireState) {
     survivor = hotel1 === acquired ? hotel2 : hotel1;
   }
 
+  // If not a tie, always set chosen to acquired for downstream steps
+  if (!needChoice && !acquireState?.chosen) {
+    acquireState = { ...acquireState, chosen: acquired };
+  }
+
   // Step logic
   const step = acquireState?.step || 'choose';
 
