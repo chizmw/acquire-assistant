@@ -56,6 +56,9 @@
         <a href="#player-board" id="nav-player-board" class="hover:underline"
           >Player Board</a
         >
+        <a href="#turn-sequence" id="nav-turn-sequence" class="hover:underline"
+          >Turn Sequence</a
+        >
         <a href="#rules" id="nav-rules" class="hover:underline">Rules</a>
         <a href="#" class="hover:underline">About</a>
       </div>
@@ -89,6 +92,57 @@
           ></iframe>
         </div>
       </section>
+      <section
+        id="turn-sequence-section"
+        class="w-full max-w-2xl mx-auto bg-white rounded shadow p-0 mt-6 sm:max-w-full hidden"
+      >
+        <div class="p-6 flex flex-col items-center">
+          <div
+            class="w-full max-w-lg bg-gradient-to-br from-yellow-200 to-blue-100 rounded-lg shadow-lg p-6 border-2 border-yellow-400"
+            style="font-family: 'Inter', Arial, sans-serif"
+          >
+            <div
+              class="text-center text-2xl font-extrabold tracking-wide text-blue-900 mb-2"
+              style="letter-spacing: 0.08em"
+            >
+              TURN SEQUENCE
+            </div>
+            <div class="text-center text-base text-gray-700 mb-6">
+              On your turn, you'll perform the following three actions:
+            </div>
+            <ol class="space-y-4">
+              <li class="flex items-start gap-4">
+                <span
+                  class="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-400 text-blue-900 font-extrabold flex items-center justify-center text-lg shadow"
+                  >1</span
+                >
+                <span class="text-lg text-gray-900"
+                  >Place a building tile on its matching space.</span
+                >
+              </li>
+              <li class="flex items-start gap-4">
+                <span
+                  class="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-400 text-blue-900 font-extrabold flex items-center justify-center text-lg shadow"
+                  >2</span
+                >
+                <span class="text-lg text-gray-900"
+                  >Buy up to three stocks in any active hotel chains from the
+                  stock market tray.</span
+                >
+              </li>
+              <li class="flex items-start gap-4">
+                <span
+                  class="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-400 text-blue-900 font-extrabold flex items-center justify-center text-lg shadow"
+                  >3</span
+                >
+                <span class="text-lg text-gray-900"
+                  >Draw a new building tile from the facedown pile.</span
+                >
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="text-center text-xs text-gray-500 py-4">
@@ -107,12 +161,21 @@
         document
           .getElementById('rules-section')
           .classList.toggle('hidden', section !== 'rules');
+        document
+          .getElementById('turn-sequence-section')
+          .classList.toggle('hidden', section !== 'turn-sequence');
       }
       document
         .getElementById('nav-player-board')
         .addEventListener('click', function (e) {
           e.preventDefault();
           showSection('player-board');
+        });
+      document
+        .getElementById('nav-turn-sequence')
+        .addEventListener('click', function (e) {
+          e.preventDefault();
+          showSection('turn-sequence');
         });
       document
         .getElementById('nav-rules')
